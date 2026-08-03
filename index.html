@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NYC Apartment Hunt — Seen & Tours</title>
+<style>
+  :root{
+    --bg:#fafaf9; --card:#fff; --text:#121214; --muted:#6b6b76; --line:#e8e6e1;
+    --chip:#f4f3f0; --chipText:#444; --accent:#111; --radius:20px; --shadow:0 6px 24px rgba(0,0,0,.06), 0 1px 6px rgba(0,0,0,.04);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:520px;margin:0 auto;padding:16px 16px 40px}
+  header{padding:22px 6px 8px}
+  header h1{font-size:26px;line-height:1.15;letter-spacing:-.02em;margin:0 0 6px;font-weight:700}
+  header p{margin:0;color:var(--muted);font-size:14px}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;letter-spacing:.02em;background:var(--chip);color:var(--chipText);padding:7px 12px;border-radius:999px;border:1px solid var(--line)}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid rgba(0,0,0,.05)}
+  .media{position:relative;background:#eee}
+  .carousel{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .carousel::-webkit-scrollbar{display:none}
+  .slide{flex:0 0 100%;scroll-snap-align:center;position:relative;aspect-ratio:4/3;background:#e9e9ea}
+  .slide img{width:100%;height:100%;object-fit:cover;display:block}
+  .dots{position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:6px;pointer-events:none}
+  .dots span{width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.5);box-shadow:0 1px 3px rgba(0,0,0,.25);transition:all .2s}
+  .dots span.active{background:#fff;width:18px}
+  .countBadge{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.66);color:#fff;font-size:11px;font-weight:700;padding:6px 9px;border-radius:999px;backdrop-filter:blur(6px)}
+  .arrow{position:absolute;top:50%;transform:translateY(-50%);border:0;width:32px;height:32px;border-radius:999px;background:rgba(255,255,255,.88);box-shadow:0 2px 10px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer}
+  .arrow.left{left:10px} .arrow.right{right:10px}
+  @media (max-width:520px){ .arrow{display:none} }
+  .info{padding:14px 16px 0}
+  .addr{font-size:17px;font-weight:700;line-height:1.25;margin:0}
+  .meta{color:var(--muted);font-size:13.5px;margin:4px 0 0;line-height:1.4}
+  .row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+  .status{background:#111;color:#fff}
+  .contentPad{padding:14px 16px 18px}
+  .section{border-top:1px solid var(--line);margin-top:14px;padding-top:14px}
+  .label{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8a8a93;margin:0 0 8px}
+  .clamp{position:relative;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3}
+  .clamp.expanded{ -webkit-line-clamp:unset; line-clamp:unset }
+  .expLink{font-size:13px;font-weight:600;margin-top:6px;display:inline-block;cursor:pointer;color:#333;text-decoration:underline;text-underline-offset:3px}
+  .bubble{background:#fbfaf8;border:1px solid var(--line);border-radius:14px;padding:12px 12px;font-size:14px;line-height:1.45}
+  .linkBtn{display:inline-flex;align-items:center;gap:8px;margin-top:12px;font-size:13.5px;font-weight:600;text-decoration:none;border:1px solid #111;border-radius:999px;padding:10px 14px}
+  .linkBtn:active{transform:translateY(1px)}
+  footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:22px;padding:0 12px;line-height:1.45}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Apartments We've Seen</h1>
+    <p>Shared from Arnav — read-only</p>
+  </header>
+
+  <div id="list"></div>
+
+  <footer>Built from NYC Apartment Hunt HQ — updates are manual exports for now<br>Up to 5 photos shown here, your photos always prioritized when you send them</footer>
+</div>
+
+<script>
+const SEEN = [
+  {
+    "address": "260 West 54th Street #22A",
+    "baths": 1, "beds": 1,
+    "building_name": "The Marc",
+    "feedback": {"text": "We didn't like it. Finishings were not good."},
+    "id": 2,
+    "neighborhood": "Midtown",
+    "originalUrl": "https://streeteasy.com/rental/5117991?utm_campaign=rental_listing&utm_medium=app_share&utm_source=ios&utm_term=211cfb058cfe40c",
+    "photos": [
+      "https://photos.zillowstatic.com/fp/0f3e7d7dc18d9540f902e2c7d064343b-full.webp",
+      "https://photos.zillowstatic.com/fp/a7afc5cf8a44c6b65bb1c5d502fb6dc6-full.webp",
+      "https://photos.zillowstatic.com/fp/26c29399ae03d27611a0263f363eed64-full.webp",
+      "https://photos.zillowstatic.com/fp/74307f62cfb44b1a4e7271ae29482997-full.webp",
+      "https://photos.zillowstatic.com/fp/ca5a469737e63223734969fe8a6cd602-full.webp",
+      "https://photos.zillowstatic.com/fp/d52d1c9199a1738fb88bea4a323621d7-full.webp",
+      "https://photos.zillowstatic.com/fp/141f3421b1fb70f48647068d339c1f1f-full.webp",
+      "https://photos.zillowstatic.com/fp/c393ca43dad9d7ffcb242b28e4f5b7eb-full.webp",
+      "https://photos.zillowstatic.com/fp/99c543506fde2adb2d0f2d5a3f589e29-full.webp",
+      "https://photos.zillowstatic.com/fp/a42ebfb5b9c16af920b031983c108614-full.webp",
+      "https://photos.zillowstatic.com/fp/3573562d4510eaa52ecb837850e5fd4e-full.webp",
+      "https://photos.zillowstatic.com/fp/15b8673115b1044df1ece5d91ca5cf92-full.webp",
+      "https://photos.zillowstatic.com/fp/5b2f4688970f299db8b2b161d356b193-full.webp",
+      "https://photos.zillowstatic.com/fp/d69425085b9e37215d5bcffa006adbbb-full.webp",
+      "https://photos.zillowstatic.com/fp/0b4d0746d47b46f3242d79efba37e23f-full.webp",
+      "https://photos.zillowstatic.com/fp/49c51799dfa5e42fac56ee56268f8e8f-full.webp",
+      "https://photos.zillowstatic.com/fp/386dbde5842d7cb14ddf9f76ee4af2d7-full.webp"
+    ],
+    "rent": 5618,
+    "status": "viewed",
+    "unit": "22A",
+    "url": "https://streeteasy.com/rental/5117991",
+    "userPhotos": [],
+    "viewedAt": "2026-07-31T00:00:00.000Z"
+  }
+];
+
+const BUILDING_FEEDBACK = {
+  "The Marc": {
+    "text": "Building lobby was warm. Floor corridors smelled bad. Didn't like it overall. Viewed Fri July 31.",
+    "cons": ["Building lobby was warm","Floor corridors smelled bad"]
+  }
+};
+
+function formatViewed(iso){
+  try{
+    const d=new Date(iso);
+    return d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  }catch(e){ return iso }
+}
+
+function render(){
+  const root=document.getElementById('list');
+  root.innerHTML='';
+  SEEN.forEach(apt=>{
+    const displayPhotos = (apt.userPhotos && apt.userPhotos.length>0)
+      ? [...apt.userPhotos.slice(0,5), ...apt.photos.slice(0, Math.max(0,5-apt.userPhotos.length))].slice(0,5)
+      : apt.photos.slice(0,5);
+    const hasUser = apt.userPhotos && apt.userPhotos.length>0;
+    const total = apt.photos.length + (hasUser?apt.userPhotos.length:0);
+    const extra = total>5 ? total-5 : 0;
+
+    const card=document.createElement('div');
+    card.className='card';
+    const viewed = formatViewed(apt.viewedAt);
+
+    // Build carousel HTML
+    let slidesHtml = displayPhotos.map((src,i)=>`
+      <div class="slide"><img loading="lazy" src="${src}" alt="${apt.address} photo ${i+1}"></div>
+    `).join('');
+
+    card.innerHTML=`
+      <div class="media">
+        <div class="carousel" id="carousel-${apt.id}">
+          ${slidesHtml}
+        </div>
+        <div class="dots" id="dots-${apt.id}">${displayPhotos.map((_,i)=>`<span class="${i===0?'active':''}"></span>`).join('')}</div>
+        ${extra?`<div class="countBadge">+${extra} more</div>`:''}
+        ${hasUser?`<div class="countBadge" style="right:auto;left:12px;background:#fff;color:#111">Your photos • ${apt.userPhotos.length}</div>`:''}
+        <button class="arrow left" data-dir="-1">‹</button>
+        <button class="arrow right" data-dir="1">›</button>
+      </div>
+      <div class="info">
+        <p class="addr">${apt.address}</p>
+        <p class="meta">${apt.building_name} • Unit ${apt.unit||''} • ${apt.neighborhood}<br>${apt.beds}bd / ${apt.baths}ba • $${apt.rent.toLocaleString()} base / $5,150 net • Viewed ${viewed}</p>
+        <div class="row">
+          <span class="pill status">${apt.status==='viewed'?'Viewed • Friday July 31 2026':'Scheduled'}</span>
+          <span class="pill">Midtown • 1 month free</span>
+        </div>
+      </div>
+      <div class="contentPad">
+        <div class="section" style="margin-top:0;border-top:0;padding-top:0">
+          <p class="label">Our take</p>
+          <div class="bubble">
+            <div class="clamp" id="fb-${apt.id}">${(apt.feedback?.text||'No feedback yet.')}</div>
+            <a class="expLink" data-target="fb-${apt.id}" style="display:none">Show more</a>
+          </div>
+        </div>
+
+        <div class="section">
+          <p class="label">Building — ${apt.building_name}</p>
+          <div class="bubble">
+            <div class="clamp" id="bfb-${apt.id}">${(BUILDING_FEEDBACK[apt.building_name]?.text || 'No building feedback yet.')}</div>
+            <a class="expLink" data-target="bfb-${apt.id}" style="display:none">Show more</a>
+            ${BUILDING_FEEDBACK[apt.building_name]?.cons?.length ? `<div style="margin-top:10px"><span class="label" style="margin:0 0 4px">Cons</span><ul style="margin:6px 0 0 18px;padding:0;font-size:13.5px;line-height:1.4">${BUILDING_FEEDBACK[apt.building_name].cons.map(c=>`<li>${c}</li>`).join('')}</ul></div>` : ''}
+          </div>
+        </div>
+
+        <a class="linkBtn" href="${apt.url||apt.originalUrl}" target="_blank" rel="noopener">View on StreetEasy ↗</a>
+      </div>
+    `;
+    root.appendChild(card);
+
+    // wire carousel
+    const carousel = card.querySelector(`#carousel-${apt.id}`);
+    const dots = [...card.querySelectorAll(`#dots-${apt.id} span`)];
+    function updateDots(){
+      const idx = Math.round(carousel.scrollLeft / carousel.clientWidth);
+      dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
+    }
+    carousel.addEventListener('scroll', ()=>{ requestAnimationFrame(updateDots); }, {passive:true});
+    card.querySelectorAll('.arrow').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const dir = parseInt(btn.dataset.dir,10);
+        const w = carousel.clientWidth;
+        carousel.scrollBy({left:dir*w, behavior:'smooth'});
+      });
+    });
+    // dot navigation
+    dots.forEach((dot,i)=> dot.addEventListener('click',()=>{
+      carousel.scrollTo({left:i*carousel.clientWidth, behavior:'smooth'});
+    }));
+
+    // clamp detection
+    ['fb-'+apt.id, 'bfb-'+apt.id].forEach(id=>{
+      const el=document.getElementById(id);
+      if(!el) return;
+      const link=el.nextElementSibling;
+      // after render, check overflow
+      requestAnimationFrame(()=>{
+        if(el.scrollHeight > el.clientHeight + 4){
+          link.style.display='inline-block';
+        }
+      });
+      link.addEventListener('click',(e)=>{
+        e.preventDefault();
+        el.classList.toggle('expanded');
+        link.textContent = el.classList.contains('expanded') ? 'Show less' : 'Show more';
+      });
+    });
+  });
+}
+render();
+</script>
+</body>
+</html>
