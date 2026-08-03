@@ -18,6 +18,7 @@
   header p{margin:0;color:var(--muted);font-size:13px}
   .fab{position:absolute;top:16px;right:4px;width:40px;height:40px;border-radius:999px;border:1px solid var(--line);background:#111;color:#fff;font-size:22px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.15);cursor:pointer}
   .fab:active{transform:scale(.96)}
+  .gear{position:absolute;top:16px;right:52px;width:36px;height:36px;border-radius:999px;border:1px solid var(--line);background:#fff;color:#333;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
   .modal{position:fixed;inset:0;z-index:9999;display:none}
   .modal.show{display:block}
   .modalBg{position:absolute;inset:0;background:rgba(18,18,20,.32);backdrop-filter:blur(6px)}
@@ -83,13 +84,15 @@
   .feedbackSaved.show{display:block}
   .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 14px;border-radius:999px;font-size:12.5px;box-shadow:0 8px 24px rgba(0,0,0,.25);display:none;z-index:9999}
   .toast.show{display:block}
+  .syncBadge{font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:#fff;display:inline-flex;gap:6px;align-items:center;margin-left:8px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>Apartments</h1>
-    <p>Shared from Arnav — updates live from HQ</p>
+    <p>Shared from Arnav — updates live from HQ <span id="syncStatus" class="syncBadge">● local only</span></p>
+    <button class="gear" id="gear" aria-label="Sync settings">⚙</button>
     <button class="fab" id="fab" aria-label="Add listing">+</button>
     <div class="tabs">
       <button data-tab="scheduled" class="active">Scheduled <span id="cnt-sched"></span></button>
@@ -119,16 +122,35 @@
         <div class="chk"><input id="f-invite" type="checkbox"><label for="f-invite">Send invite — schedule a tour + create Google Calendar invite?</label></div>
         <div id="f-dt-wrap" style="display:none" class="f"><label>Date & time of tour</label><input id="f-dt" type="datetime-local"></div>
         <button id="f-submit" class="btn">Add to site</button>
-        <div class="hint" id="f-hint">Always to rjberg2021@gmail.com, and to arnavmody@meta.com only if weekday 9am-6pm ET (never to gmail). Unchecked = just adds to this site (Interested by default). Checked = also creates calendar event — Title = address, body = link + notes, 1hr long. Girlfriend can add here directly — no login.</div>
+        <div class="hint" id="f-hint">Always to rjberg2021@gmail.com, and to arnavmody@meta.com only if weekday 9am-6pm ET (never to gmail). Unchecked = just adds to this site (Interested by default). Checked = also creates calendar event — Title = address, body = link + notes, 1hr long. Girlfriend can add here directly — no login. If you set a token in ⚙, it also saves to the shared file instantly.</div>
         <div id="f-copy" class="copyBox"></div>
         <button id="f-copy-btn" class="miniBtn" style="display:none;margin-top:8px">Copy summary to send to Tintin</button>
       </div>
     </div>
   </div>
 
+  <!-- SYNC SETTINGS MODAL -->
+  <div class="modal" id="syncModal">
+    <div class="modalBg" id="syncBg"></div>
+    <div class="modalCard">
+      <div class="modalHead"><h3>Shared sync</h3><button class="iconBtn" id="closeSync">✕</button></div>
+      <div style="padding:10px 14px 16px">
+        <p style="font-size:13px;color:#555;margin:0 0 10px">When you both paste the same fine-grained GitHub PAT with <b>Contents: read/write</b> to <code>arnav-hq/nyc-apartment-hunt-shared</code>, any feedback or listing you add here saves to <code>data/shared.json</code> in the repo and shows up on both phones after reload. Anonymous visitors can read (same-origin fetch) but can't write without the token. No token in source.</p>
+        <div class="f"><label>GitHub token (fine-grained PAT)</label><input id="s-token" type="password" placeholder="github_pat_..."></div>
+        <div class="f"><label>Repo</label><input id="s-repo" type="text" value="arnav-hq/nyc-apartment-hunt-shared"></div>
+        <div class="f"><label>Path</label><input id="s-path" type="text" value="data/shared.json"></div>
+        <button id="s-save" class="btn">Save token in this browser</button>
+        <button id="s-test" class="miniBtn" style="margin-top:8px;width:100%">Test sync read</button>
+        <button id="s-clear" class="miniBtn" style="margin-top:8px;width:100%;color:#a33">Clear token (local only)</button>
+        <div id="s-status" class="hint" style="margin-top:10px"></div>
+        <div class="hint" style="margin-top:12px">How to make a token: GitHub → Settings → Developer Settings → Personal access tokens → Fine-grained → New token → Repository access → Only select this repo → Permissions: Contents: Read and write → Generate. Share via AirDrop/encrypted message, paste here on both phones. Expires in 30-90 days is fine.</div>
+      </div>
+    </div>
+  </div>
+
   <div id="list"></div>
 
-  <footer>Built from NYC Apartment Hunt HQ — tabs auto-update when you drop a link + time (→ Scheduled) or give feedback (→ Seen)<br>Your photos always prioritized. Up to 5 shown, swipe / dots. Feedback saves instantly to this browser, plus syncs to HQ when online.</footer>
+  <footer>Built from NYC Apartment Hunt HQ — tabs auto-update when you drop a link + time (→ Scheduled) or give feedback (→ Seen)<br>Your photos always prioritized. Up to 5 shown, swipe / dots. Feedback saves instantly to this browser, and when token is set, also to shared file GitHub (repo same file). When both of you have token, feedback appears instantly; without token, use Copy summary to send to Tintin/HQ.</footer>
   <div id="toast" class="toast"></div>
 </div>
 
@@ -170,12 +192,132 @@ const BUILDING_FEEDBACK = {
 const LS_KEY = "nyc_apt_hq_v2";
 const LS_CUSTOM = "nyc_apt_custom_listings";
 const LS_FB = "nyc_apt_feedback_overrides";
+const LS_TOKEN = "GITHUB_TOKEN";
+const LS_REPO = "GITHUB_REPO";
+const LS_PATH = "GITHUB_PATH";
+
+const REPO_DEFAULT = "arnav-hq/nyc-apartment-hunt-shared";
+const PATH_DEFAULT = "data/shared.json";
+
+function getRepo(){ return (localStorage.getItem(LS_REPO) || REPO_DEFAULT).trim(); }
+function getPath(){ return (localStorage.getItem(LS_PATH) || PATH_DEFAULT).trim(); }
+function getToken(){ return (localStorage.getItem(LS_TOKEN) || window.GITHUB_TOKEN || "").trim(); }
+
+function getOwnerRepo(){
+  const r = getRepo();
+  const parts = r.split('/');
+  if(parts.length>=2) return {owner: parts[0], repo: parts.slice(1).join('/')};
+  return {owner:'arnav-hq', repo:'nyc-apartment-hunt-shared'};
+}
+
+async function loadRemoteSharedViaApi(){
+  const token = getToken();
+  if(!token) return null;
+  const {owner, repo} = getOwnerRepo();
+  const path = getPath();
+  try{
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path).replace(/%2F/g,'/')}`;
+    const resp = await fetch(url, {headers:{'Accept':'application/vnd.github+json','Authorization':`Bearer ${token}`,'X-GitHub-Api-Version':'2022-11-28'}});
+    if(!resp.ok) return null;
+    const j = await resp.json();
+    if(!j.content) return null;
+    const text = atob(j.content.replace(/\n/g,''));
+    const obj = JSON.parse(text);
+    return {obj, sha:j.sha};
+  }catch(e){ return null; }
+}
+
+async function loadRemoteSharedViaPages(){
+  try{
+    const resp = await fetch(`./${getPath()}?cb=${Date.now()}`, {cache:'no-store'});
+    if(!resp.ok) return null;
+    const obj = await resp.json();
+    return {obj, sha:null};
+  }catch{ return null; }
+}
+
+async function loadRemote(){
+  // Try API first if token set (fresh), else Pages fetch
+  let r = await loadRemoteSharedViaApi();
+  if(r && r.obj) return r;
+  r = await loadRemoteSharedViaPages();
+  return r;
+}
+
+let REMOTE_SHA = null;
+async function mergeRemote(){
+  const statusEl = document.getElementById('syncStatus');
+  try{
+    const res = await loadRemote();
+    if(!res || !res.obj) { if(statusEl) statusEl.textContent = getToken() ? '● sync ready, no remote yet' : '● local only'; return; }
+    REMOTE_SHA = res.sha || null;
+    const o = res.obj;
+    if(Array.isArray(o.custom)){
+      // merge custom listings not already in CUSTOM by id
+      const existingIds = new Set(CUSTOM.map(c=>String(c.id)));
+      o.custom.forEach(c=>{
+        if(!existingIds.has(String(c.id))){
+          CUSTOM.push(c);
+          existingIds.add(String(c.id));
+        } else {
+          // update feedback if remote newer?
+          const idx = CUSTOM.findIndex(x=>String(x.id)===String(c.id));
+          if(idx>=0 && c.feedback) CUSTOM[idx].feedback = c.feedback;
+        }
+      });
+    }
+    if(o.feedbackOverrides && typeof o.feedbackOverrides==='object'){
+      Object.entries(o.feedbackOverrides).forEach(([k,v])=>{
+        FB_STORE[k]=v;
+        const apt = SEEN.find(a=>String(a.id)===String(k)) || CUSTOM.find(a=>String(a.id)===String(k));
+        if(apt) apt.feedback = {text:v};
+      });
+      localStorage.setItem(LS_FB, JSON.stringify(FB_STORE));
+      localStorage.setItem(LS_CUSTOM, JSON.stringify(CUSTOM));
+    }
+    if(statusEl) statusEl.textContent = getToken() ? `● synced • ${new Date(o.updatedAt||Date.now()).toLocaleTimeString()}` : '● shared available';
+  }catch(e){
+    if(statusEl) statusEl.textContent = '● local only';
+  }
+}
+
+async function pushRemoteShared(){
+  const token = getToken();
+  if(!token) return {ok:false, reason:'no token'};
+  const {owner, repo} = getOwnerRepo();
+  const path = getPath();
+  const payload = {
+    custom: CUSTOM,
+    feedbackOverrides: FB_STORE,
+    updatedAt: new Date().toISOString(),
+    updatedBy: navigator.userAgent.slice(0,80)
+  };
+  const contentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+  // need current sha if exists
+  let sha = REMOTE_SHA;
+  if(!sha){
+    try{
+      const cur = await loadRemoteSharedViaApi();
+      sha = cur?.sha || null;
+      REMOTE_SHA = sha;
+    }catch{}
+  }
+  try{
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+    const body = {message:`Sync shared listings ${new Date().toISOString()}`, content: contentB64, branch:'main'};
+    if(sha) body.sha = sha;
+    const resp = await fetch(url, {method:'PUT', headers:{'Accept':'application/vnd.github+json','Authorization':`Bearer ${token}`,'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'}, body: JSON.stringify(body)});
+    const j = await resp.json();
+    if(!resp.ok){ return {ok:false, reason: j.message||resp.statusText}; }
+    REMOTE_SHA = j.content?.sha || null;
+    return {ok:true};
+  }catch(e){ return {ok:false, reason:String(e)}; }
+}
 
 function loadStore(){
   try{
     const custom = JSON.parse(localStorage.getItem(LS_CUSTOM) || "[]");
     const fb = JSON.parse(localStorage.getItem(LS_FB) || "{}");
-    // apply fb overrides into SEEN
     Object.entries(fb).forEach(([k,v])=>{
       const id = Number(k);
       const apt = SEEN.find(a=>a.id===id) || custom.find(a=>a.id===id);
@@ -189,7 +331,7 @@ let { custom: CUSTOM, fb: FB_STORE } = loadStore();
 let activeTab = "scheduled";
 
 function showToast(msg){
-  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800);
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3200);
 }
 
 function mapTabToData(tab){
@@ -213,9 +355,9 @@ function render(){
   const seenCount = allData().filter(a=>a.status==="viewed"||a.viewedAt).length;
   const schedCount = allData().filter(a=>a.status==="scheduled").length;
   const interCount = allData().filter(a=>a.status==="unscheduled" || (!a.status || (a.status!=="viewed"&&a.status!=="scheduled"))).length;
-  document.getElementById('cnt-seen').textContent = `· ${seenCount}`;
-  document.getElementById('cnt-sched').textContent = schedCount?`· ${schedCount}`:"";
-  document.getElementById('cnt-inter').textContent = interCount?`· ${interCount}`:"";
+  const se = document.getElementById('cnt-seen'); if(se) se.textContent = `· ${seenCount}`;
+  const sc = document.getElementById('cnt-sched'); if(sc) sc.textContent = schedCount?`· ${schedCount}`:"";
+  const ic = document.getElementById('cnt-inter'); if(ic) ic.textContent = interCount?`· ${interCount}`:"";
 
   document.querySelectorAll('.tabs button').forEach(b=>{
     b.classList.toggle('active', b.dataset.tab===activeTab);
@@ -299,14 +441,13 @@ function render(){
             <button class="miniBtn primary" data-action="save-fb" data-id="${apt.id}">Save feedback</button>
             <button class="miniBtn" data-action="copy-fb" data-id="${apt.id}">Copy summary to send to Tintin</button>
           </div>
-          <div class="feedbackSaved" id="fbsaved-${apt.id}">Saved ✓ • Also in localStorage. Use Copy summary to sync to HQ + calendar if needed.</div>
-          <div class="hint">1-tap save: feedback is stored locally immediately, and if possible POSTs to HQ to sync to your main doc + calendar flow.</div>
+          <div class="feedbackSaved" id="fbsaved-${apt.id}">Saved ✓ • Local + ${getToken()?'shared':'copy to sync'}. Reload to see on other phone if shared.</div>
+          <div class="hint">If you set token in ⚙, Save writes to shared file instantly and other phone sees it after reload.</div>
         </div>
       </div>
     `;
     root.appendChild(card);
 
-    // carousel wiring
     const carousel = card.querySelector(`#carousel-${apt.id}`);
     if(!carousel) return;
     const dots = [...card.querySelectorAll(`#dots-${apt.id} span`)];
@@ -317,7 +458,6 @@ function render(){
     });
     dots.forEach((dot,i)=> dot.addEventListener('click',()=> carousel.scrollTo({left:i*carousel.clientWidth,behavior:'smooth'})));
 
-    // clamp
     ['fb-'+apt.id,'bfb-'+apt.id].forEach(id=>{
       const el=document.getElementById(id); if(!el) return; const link=el.nextElementSibling; if(!link) return;
       requestAnimationFrame(()=>{ if(el.scrollHeight>el.clientHeight+4) link.style.display='inline-block'; });
@@ -326,7 +466,7 @@ function render(){
   });
 }
 
-// ----- Modal + Add form handler -----
+// ----- Modal + Add form -----
 const fab = document.getElementById('fab');
 const modal = document.getElementById('modal');
 const closeModal = document.getElementById('closeModal');
@@ -336,26 +476,50 @@ function closeAdd(){ modal.classList.remove('show'); }
 fab.addEventListener('click', openAdd);
 closeModal.addEventListener('click', closeAdd);
 modalBg.addEventListener('click', closeAdd);
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeAdd(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeAdd(); closeSync(); }});
 
-// ----- Add form handler -----
+// ----- Sync settings modal -----
+const gear=document.getElementById('gear');
+const syncM=document.getElementById('syncModal');
+const syncBg=document.getElementById('syncBg');
+const closeSyncBtn=document.getElementById('closeSync');
+function openSync(){
+  document.getElementById('s-token').value = getToken();
+  document.getElementById('s-repo').value = getRepo();
+  document.getElementById('s-path').value = getPath();
+  syncM.classList.add('show');
+}
+function closeSync(){ syncM.classList.remove('show'); }
+gear.addEventListener('click', openSync);
+closeSyncBtn.addEventListener('click', closeSync);
+syncBg.addEventListener('click', closeSync);
+document.getElementById('s-save').addEventListener('click', ()=>{
+  localStorage.setItem(LS_TOKEN, document.getElementById('s-token').value.trim());
+  localStorage.setItem(LS_REPO, document.getElementById('s-repo').value.trim());
+  localStorage.setItem(LS_PATH, document.getElementById('s-path').value.trim());
+  document.getElementById('s-status').textContent='Saved in this browser. Paste same token on other phone.';
+  showToast('Sync token saved ✓'); closeSync(); mergeRemote().then(()=>render());
+});
+document.getElementById('s-clear').addEventListener('click', ()=>{
+  localStorage.removeItem(LS_TOKEN); document.getElementById('s-token').value=''; document.getElementById('s-status').textContent='Cleared local only'; showToast('Token cleared'); 
+});
+document.getElementById('s-test').addEventListener('click', async ()=>{
+  document.getElementById('s-status').textContent='Testing read...';
+  const r = await loadRemote();
+  document.getElementById('s-status').textContent = r ? `OK • ${r.obj.custom?.length||0} custom, ${Object.keys(r.obj.feedbackOverrides||{}).length} feedbacks` : 'No remote yet (file may not exist yet)';
+  if(r) { await mergeRemote(); render(); }
+});
+
 const inviteChk = document.getElementById('f-invite');
 const dtWrap = document.getElementById('f-dt-wrap');
 inviteChk.addEventListener('change',()=>{ dtWrap.style.display = inviteChk.checked ? 'block':'none'; document.getElementById('f-submit').textContent = inviteChk.checked ? 'Add + Create Invite' : 'Add to site'; });
 
 function tryHqPost(payload){
-  // Attempt direct POST to Hatch space if configured.
-  // Set window.HQ_API_URL to your space actions endpoint, e.g. "https://your-space.hatch.run/actions"
-  const urls=[
-    window.HQ_API_URL,
-    window.HQ_ACTIONS_URL,
-    localStorage.getItem('HQ_API_URL')
-  ].filter(Boolean);
+  const urls=[window.HQ_API_URL, window.HQ_ACTIONS_URL, localStorage.getItem('HQ_API_URL')].filter(Boolean);
   if(urls.length===0) return Promise.resolve({ok:false, skipped:true});
   const body = JSON.stringify({action:"addSeenApartment", args: payload});
   return fetch(urls[0], {method:"POST", headers:{'Content-Type':'application/json'}, body}).then(r=>r.json()).catch(()=>({ok:false}));
 }
-
 function tryHqFeedbackPost(id, text){
   const urls=[window.HQ_API_URL, window.HQ_ACTIONS_URL, localStorage.getItem('HQ_API_URL')].filter(Boolean);
   if(urls.length===0) return Promise.resolve({ok:false, skipped:true});
@@ -366,7 +530,7 @@ function tryHqFeedbackPost(id, text){
 document.getElementById('f-submit').addEventListener('click', async ()=>{
   const link = document.getElementById('f-link').value.trim();
   const addr = document.getElementById('f-addr').value.trim();
-  const tab = document.getElementById('f-tab').value; // seen/scheduled/interested
+  const tab = document.getElementById('f-tab').value;
   const notes = document.getElementById('f-notes').value.trim();
   const sendInvite = document.getElementById('f-invite').checked;
   const dt = document.getElementById('f-dt').value;
@@ -376,9 +540,6 @@ document.getElementById('f-submit').addEventListener('click', async ()=>{
 
   const statusMap = {seen:"viewed", scheduled:"scheduled", interested:"unscheduled"};
   const status = statusMap[tab] || "unscheduled";
-
-  let photos = [];
-  // build notes parsed: building name, rent, sqft hints? keep simple
 
   const newId = Date.now();
   const payload = {
@@ -392,10 +553,9 @@ document.getElementById('f-submit').addEventListener('click', async ()=>{
     viewedAt: tab==="seen" ? new Date().toISOString() : null,
     feedback: notes ? {text: notes} : null,
     notes,
-    photos
+    photos:[]
   };
 
-  // local persistence
   CUSTOM.unshift({
     id: newId,
     address: payload.address,
@@ -411,41 +571,33 @@ document.getElementById('f-submit').addEventListener('click', async ()=>{
     viewedAt: payload.viewedAt,
     feedback: payload.feedback
   });
+  if(notes){
+    FB_STORE[newId]=notes;
+  }
   localStorage.setItem(LS_CUSTOM, JSON.stringify(CUSTOM));
+  localStorage.setItem(LS_FB, JSON.stringify(FB_STORE));
 
-  // Try HQ sync
-  tryHqPost(payload).then(res=>{
-    if(res && res.id) showToast('Synced to HQ ✓');
-  });
+  tryHqPost(payload).then(res=>{ if(res && res.id) showToast('Synced to HQ ✓'); });
 
-  // Invite summary for Tintin to create calendar event if static site can't call directly
   let attendees = ['rjberg2021@gmail.com'];
   let isWeekdayWorkHours = false;
   if(payload.scheduledAt){
     const d = new Date(payload.scheduledAt);
-    const day = d.getDay(); // 0 Sun - 6 Sat, use local time of viewing
-    const hour = d.getHours();
-    // Check weekday 9am-6pm in America/New_York (ET)
     try {
-      const fmt = new Intl.DateTimeFormat('en-US', {timeZone:'America/New_York', weekday:'short', hour:'numeric', hour12:false});
-      const parts = fmt.formatToParts(d);
-      // simpler: convert to ET
       const etStr = d.toLocaleString('en-US', {timeZone:'America/New_York'});
       const et = new Date(etStr);
       const etDay = et.getDay();
       const etHour = et.getHours();
       isWeekdayWorkHours = etDay>=1 && etDay<=5 && etHour>=9 && etHour<18;
     } catch {
+      const day = d.getDay(); const hour = d.getHours();
       isWeekdayWorkHours = day>=1 && day<=5 && hour>=9 && hour<18;
     }
     if(isWeekdayWorkHours) attendees.push('arnavmody@meta.com');
   }
   let copySummary = `ADD_APARTMENT\nTab: ${tab}\nStatus: ${status}\nAddress: ${payload.address}\nLink: ${link||'(none)'}\nNotes: ${notes||'(none)'}\nScheduledAt: ${payload.scheduledAt||'(none)'}\nSendInvite: ${sendInvite?'yes':'no'}\nAttendees: ${attendees.join(', ')}\nWeekday9to6: ${isWeekdayWorkHours?'yes':'no'}\nCalendar: ${sendInvite?`Event "${payload.address}" from ${payload.scheduledAt} to ${payload.scheduledAt?new Date(new Date(payload.scheduledAt).getTime()+60*60*1000).toISOString():'+1hr'} with link ${link} and notes ${notes} (never use arnavmody@gmail.com)`:'(no invite)'}`;
-  // feedback copy handled separately
 
   if(sendInvite){
-    // Calendar event creation: if HQ API can do it, payload will be enough for main agent.
-    // Also store a "pending invite" in localStorage that Tintin can read when user pastes copy
     localStorage.setItem('LAST_PENDING_INVITE', copySummary);
   }
 
@@ -457,7 +609,13 @@ document.getElementById('f-submit').addEventListener('click', async ()=>{
     try{ await navigator.clipboard.writeText(copySummary); showToast('Copied — paste in Hatch chat to Tintin'); }catch{ copyBox.style.userSelect='text'; showToast('Select & copy the text above'); }
   };
 
-  // reset form slightly
+  // Push to shared GitHub file if token set
+  if(getToken()){
+    const ret = await pushRemoteShared();
+    if(ret.ok) showToast('Saved shared ✓ — other phone sees after reload');
+    else showToast('Saved locally, shared push failed: '+(ret.reason||'check token'));
+  }
+
   document.getElementById('f-link').value='';
   document.getElementById('f-addr').value='';
   document.getElementById('f-notes').value='';
@@ -470,7 +628,6 @@ document.getElementById('f-submit').addEventListener('click', async ()=>{
   closeAdd();
 });
 
-// per-card feedback delegation
 document.getElementById('list').addEventListener('click', async (e)=>{
   const btn = e.target.closest('button[data-action]');
   if(!btn) return;
@@ -480,16 +637,21 @@ document.getElementById('list').addEventListener('click', async (e)=>{
   const text = (textarea?.value||'').trim();
   if(action==='save-fb'){
     if(!text){ showToast('Write feedback first'); return; }
-    // local
     FB_STORE[id]=text;
     localStorage.setItem(LS_FB, JSON.stringify(FB_STORE));
-    // update in-memory
     const all=[...SEEN,...CUSTOM];
     const apt=all.find(a=>String(a.id)===String(id));
     if(apt){ apt.feedback={text}; }
-    document.getElementById(`fbsaved-${id}`)?.classList.add('show');
+    const elSaved = document.getElementById(`fbsaved-${id}`);
+    if(elSaved) elSaved.classList.add('show');
     tryHqFeedbackPost(id, text).then(r=>{ if(r&&r.ok) showToast('Feedback synced to HQ'); });
-    showToast('Feedback saved locally ✓');
+    if(getToken()){
+      const ret = await pushRemoteShared();
+      if(ret.ok) showToast('Feedback saved locally + shared ✓');
+      else showToast('Feedback saved locally, shared failed: '+(ret.reason||''));
+    }else{
+      showToast('Feedback saved locally ✓ — set token in ⚙ to share');
+    }
     render();
     setTimeout(()=>{ const el=document.getElementById(`ta-${id}`); if(el) el.value=text; },100);
   }else if(action==='copy-fb'){
@@ -498,12 +660,12 @@ document.getElementById('list').addEventListener('click', async (e)=>{
     const summary=`FEEDBACK\nListingId: ${id}\nAddress: ${apt?.address||'unknown'}\nBuilding: ${apt?.building_name||'unknown'}\nLink: ${apt?.url||apt?.originalUrl||''}\nFeedback: ${fb||'(no text)'}\nMoveTo: Seen`;
     try{ await navigator.clipboard.writeText(summary); showToast('Feedback copied — paste to Tintin'); }catch{
       const box=document.getElementById('f-copy');
-      box.textContent=summary; box.classList.add('show'); showToast('Summary below — copy it');
+      box.textContent=summary; box.classList.add('show'); openAdd(); showToast('Summary below — copy it');
     }
   }
 });
 
-render();
+mergeRemote().then(()=>render()).finally(()=>render());
 </script>
 </body>
 </html>
