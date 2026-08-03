@@ -106,7 +106,7 @@
     <div class="chk"><input id="f-invite" type="checkbox"><label for="f-invite">Send invite — schedule a tour + create Google Calendar invite?</label></div>
     <div id="f-dt-wrap" style="display:none" class="f"><label>Date & time of tour</label><input id="f-dt" type="datetime-local"></div>
     <button id="f-submit" class="btn">Add to site</button>
-    <div class="hint" id="f-hint">Unchecked = just adds to this site (Interested by default). Checked = also creates calendar event — always to rjberg2021@gmail.com, and to arnavmody@meta.com only if it's a weekday 9am-6pm (never to arnavmody@gmail.com). Title = address, body = link + notes, 1hr long. Girlfriend can add here directly — no login.</div>
+    <div class="hint" id="f-hint">Always to rjberg2021@gmail.com, and to arnavmody@meta.com only if weekday 9am-6pm ET (never to gmail). Unchecked = just adds to this site (Interested by default). Checked = also creates calendar event — Title = address, body = link + notes, 1hr long. Girlfriend can add here directly — no login.</div>
     <div id="f-copy" class="copyBox"></div>
     <button id="f-copy-btn" class="miniBtn" style="display:none;margin-top:8px">Copy summary to send to Tintin</button>
   </div>
@@ -263,17 +263,19 @@ function render(){
       </div>
       <div class="info">
         <p class="addr">${apt.address}</p>
-        <p class="meta">${apt.building_name?apt.building_name+' • ':''}${apt.unit? 'Unit '+apt.unit+' • ':''}${apt.neighborhood||''}<br>${apt.beds||'?'}bd / ${apt.baths||'?'}ba${apt.rent?` • $${apt.rent.toLocaleString()}/mo`:''}</p>
-        <div class="row">
-          <span class="pill" style="${activeTab==='seen'?'background:#ede8ff;color:#5a36c8':activeTab==='scheduled'?'background:#d7efe6;color:#0f6a43':''}">${apt.status||activeTab}</span>
-          ${apt.rent?`<span class="pill">$${apt.rent.toLocaleString()}</span>`:''}
-          ${apt.sqft?`<span class="pill">${apt.sqft} sqft</span>`:''}
+        <p class="meta">${apt.building_name?apt.building_name+' • ':''}${apt.unit? 'Unit '+apt.unit+' • ':''}${apt.neighborhood||''}<br>${apt.beds||'?'}bd / ${apt.baths||'?'}ba</p>
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+            <span class="pill" style="${activeTab==='seen'?'background:#ede8ff;color:#5a36c8':activeTab==='scheduled'?'background:#d7efe6;color:#0f6a43':''}">${apt.status||activeTab}</span>
+            ${apt.rent?`<span class="pill">$${apt.rent.toLocaleString()}</span>`:''}
+            ${apt.sqft?`<span class="pill">${apt.sqft} sqft</span>`:''}
+          </div>
+          ${apt.url||apt.originalUrl?`<a class="linkBtn" href="${apt.url||apt.originalUrl}" target="_blank" rel="noopener" style="margin-top:0;white-space:nowrap;flex-shrink:0">View ↗</a>`:''}
         </div>
       </div>
       <div class="contentPad">
         ${fbText?`<div class="section" style="margin-top:0;border-top:0;padding-top:0"><p class="label">Our take</p><div class="bubble"><div class="clamp" id="fb-${apt.id}">${fbText}</div><a class="expLink" data-target="fb-${apt.id}" style="display:none">Show more</a></div></div>`:`<div class="section" style="margin-top:0;border-top:0;padding-top:0"><p class="label">Our take</p><div class="bubble" style="color:#777;font-style:italic" id="fbph-${apt.id}">No feedback yet — tap Add feedback below.</div></div>`}
         ${bfbText?`<div class="section"><p class="label">Building — ${apt.building_name}</p><div class="bubble"><div class="clamp" id="bfb-${apt.id}">${bfbText}</div><a class="expLink" data-target="bfb-${apt.id}" style="display:none">Show more</a></div></div>`:''}
-        <a class="linkBtn" href="${apt.url||apt.originalUrl||'#'}" target="_blank" rel="noopener">View on StreetEasy ↗</a>
 
         <div class="feedbackInline">
           <p class="label">Add feedback to this listing</p>
@@ -411,17 +413,7 @@ document.getElementById('f-submit').addEventListener('click', async ()=>{
     }
     if(isWeekdayWorkHours) attendees.push('arnavmody@meta.com');
   }
-  let copySummary = `ADD_APARTMENT
-Tab: ${tab}
-Status: ${status}
-Address: ${payload.address}
-Link: ${link||'(none)'}
-Notes: ${notes||'(none)'}
-ScheduledAt: ${payload.scheduledAt||'(none)'}
-SendInvite: ${sendInvite?'yes':'no'}
-Attendees: ${attendees.join(', ')}
-Weekday9to6: ${isWeekdayWorkHours?'yes':'no'}
-Calendar: ${sendInvite?`Event "${payload.address}" from ${payload.scheduledAt} to ${payload.scheduledAt?new Date(new Date(payload.scheduledAt).getTime()+60*60*1000).toISOString():'+1hr'} with link ${link} and notes ${notes} (never use arnavmody@gmail.com)`:'(no invite)'}`;
+  let copySummary = `ADD_APARTMENT\nTab: ${tab}\nStatus: ${status}\nAddress: ${payload.address}\nLink: ${link||'(none)'}\nNotes: ${notes||'(none)'}\nScheduledAt: ${payload.scheduledAt||'(none)'}\nSendInvite: ${sendInvite?'yes':'no'}\nAttendees: ${attendees.join(', ')}\nWeekday9to6: ${isWeekdayWorkHours?'yes':'no'}\nCalendar: ${sendInvite?`Event "${payload.address}" from ${payload.scheduledAt} to ${payload.scheduledAt?new Date(new Date(payload.scheduledAt).getTime()+60*60*1000).toISOString():'+1hr'} with link ${link} and notes ${notes} (never use arnavmody@gmail.com)`:'(no invite)'}`;
   // feedback copy handled separately
 
   if(sendInvite){
@@ -475,13 +467,7 @@ document.getElementById('list').addEventListener('click', async (e)=>{
   }else if(action==='copy-fb'){
     const apt = allData().find(a=>String(a.id)===String(id));
     const fb = text || apt?.feedback?.text || '';
-    const summary=`FEEDBACK
-ListingId: ${id}
-Address: ${apt?.address||'unknown'}
-Building: ${apt?.building_name||'unknown'}
-Link: ${apt?.url||apt?.originalUrl||''}
-Feedback: ${fb||'(no text)'}
-MoveTo: Seen`;
+    const summary=`FEEDBACK\nListingId: ${id}\nAddress: ${apt?.address||'unknown'}\nBuilding: ${apt?.building_name||'unknown'}\nLink: ${apt?.url||apt?.originalUrl||''}\nFeedback: ${fb||'(no text)'}\nMoveTo: Seen`;
     try{ await navigator.clipboard.writeText(summary); showToast('Feedback copied — paste to Tintin'); }catch{
       const box=document.getElementById('f-copy');
       box.textContent=summary; box.classList.add('show'); showToast('Summary below — copy it');
