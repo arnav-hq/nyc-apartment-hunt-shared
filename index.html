@@ -158,6 +158,40 @@
 // ---- DATA (seed) ----
 const SEEN = [
   {
+    "address": "150 West 56th Street #2810",
+    "baths": 1, "beds": 1,
+    "building_name": "CitySpire",
+    "feedback": {"text": "We really really liked the apartment in the building. There was a balcony, which was really nice. The apartment layout was a little odd but it was a good size with good storage. There was a weird Murphy bed situation going on, which was a little strange, but overall it was a beautiful apartment. The building was also really great. It had a pool and a gym, which we could see ourselves using, and it was a pretty luxurious building. The issue with this is that the move-in date is going to be too soon for us and also she only wants to give it out furnished, which we are not going to do for sure. In reality this is not going to be an option for her but this is definitely a building that we like and would like to keep our eyes on", "pros": ["really liked", "balcony nice", "good size", "good storage", "beautiful apartment", "building great", "pool", "gym", "luxurious", "building to watch"], "cons": ["layout odd", "Murphy bed strange", "move-in too soon", "furnished only"]},
+    "id": 4,
+    "neighborhood": "Midtown",
+    "originalUrl": "https://streeteasy.com/rental/5096758?utm_campaign=rental_listing&utm_medium=app_share&utm_source=ios&utm_term=c902da07e1ad464",
+    "photos": ["og/1785800133713-7lyvg8.jpg"],
+    "rent": 7000,
+    "status": "viewed",
+    "scheduledAt": null,
+    "unit": "2810",
+    "url": "https://streeteasy.com/rental/5096758",
+    "userPhotos": [],
+    "viewedAt": "2026-08-03T00:00:00.000Z"
+  },
+  {
+    "address": "10 West 65th Street #4N",
+    "baths": 1, "beds": 1,
+    "building_name": null,
+    "feedback": {"text": "the apartment was really big. The living room was big and the kitchen was big. We really liked the size and the storage. The building was a little old but it's fine. The hallways smelled like dog. The other issue with apartment 4N is that even though it's south-facing, the windows just faced the building so the view was not great. I'm not sure how much bright light that will be and we can't control the heat I didn't like that the view was straight into a building. I don't need a big view but it was a little tight to the next window right over. The layout could have been a little better but I'm not complaining about that.", "pros": ["really big", "living room big", "kitchen big", "size and storage"], "cons": ["building a little old", "hallways smelled like dog", "south-facing but faced building", "view not great", "tight to next window", "can't control heat", "unsure light", "layout could be better"]},
+    "id": 3,
+    "neighborhood": "Lincoln Square",
+    "originalUrl": "https://streeteasy.com/rental/3916750",
+    "photos": [],
+    "rent": 6500,
+    "status": "viewed",
+    "scheduledAt": null,
+    "unit": "4N",
+    "url": "https://streeteasy.com/rental/3916750",
+    "userPhotos": [],
+    "viewedAt": "2026-08-03T00:00:00.000Z"
+  },
+  {
     "address": "260 West 54th Street #22A",
     "baths": 1, "beds": 1,
     "building_name": "The Marc",
@@ -182,10 +216,43 @@ const SEEN = [
     "viewedAt": "2026-07-31T00:00:00.000Z"
   }
 ];
-const SCHEDULED = [];
+const SCHEDULED = [
+  {
+    "address": "350 West 50th Street #6U",
+    "baths": null, "beds": 1,
+    "building_name": "Two WorldWide Plaza",
+    "id": 5,
+    "neighborhood": "Hell's Kitchen",
+    "originalUrl": "https://streeteasy.com/rental/5119063?utm_campaign=rental_listing&utm_medium=app_share&utm_source=ios&utm_term=0bc7f1b138ad463",
+    "photos": ["og/1785800946250-gueoo9.jpg"],
+    "rent": null,
+    "status": "scheduled",
+    "scheduledAt": "2026-08-04T16:30:00.000Z",
+    "url": "https://streeteasy.com/rental/5119063",
+    "userPhotos": [],
+    "viewedAt": null
+  },
+  {
+    "address": "One Columbus Place, New York, NY 10019",
+    "baths": 1, "beds": 1,
+    "building_name": "One Columbus Place",
+    "id": 6,
+    "neighborhood": "Hell's Kitchen",
+    "originalUrl": "https://streeteasy.com/rental/5117632?utm_campaign=rental_listing&utm_medium=app_share&utm_source=ios&utm_term=4c314b4099484d3",
+    "photos": ["og/1785800960275-dtbyqu.jpg"],
+    "rent": null,
+    "status": "scheduled",
+    "scheduledAt": "2026-08-07T19:30:00.000Z",
+    "url": "https://streeteasy.com/rental/5117632",
+    "userPhotos": [],
+    "viewedAt": null
+  }
+];
 const INTERESTED = [];
 const BUILDING_FEEDBACK = {
-  "The Marc": { "text": "Building lobby was warm. Floor corridors smelled bad. Didn't like it overall. Viewed Fri July 31.", "cons": ["Building lobby was warm","Floor corridors smelled bad"] }
+  "CitySpire": { "text": "Really great - luxurious. Pool and gym we could see ourselves using. Building we like - want to watch. Viewed Aug 3 - furnished only, move-in too soon so not an option.", "pros": ["great", "luxurious", "pool", "gym", "building we like"], "cons": ["furnished only", "move-in too soon"] },
+  "The Marc": { "text": "Building lobby was warm. Floor corridors smelled bad. Didn't like it overall. Viewed Fri July 31.", "cons": ["Building lobby was warm","Floor corridors smelled bad"] },
+  "10 West 65th": { "text": "Building a little old but fine. Hallways smelled like dog. Viewed Aug 3.", "cons": ["building old", "hallways smelled like dog"] }
 };
 
 // ---- Storage helpers ----
@@ -595,7 +662,17 @@ document.getElementById('f-submit').addEventListener('click', async ()=>{
     }
     if(isWeekdayWorkHours) attendees.push('arnavmody@meta.com');
   }
-  let copySummary = `ADD_APARTMENT\nTab: ${tab}\nStatus: ${status}\nAddress: ${payload.address}\nLink: ${link||'(none)'}\nNotes: ${notes||'(none)'}\nScheduledAt: ${payload.scheduledAt||'(none)'}\nSendInvite: ${sendInvite?'yes':'no'}\nAttendees: ${attendees.join(', ')}\nWeekday9to6: ${isWeekdayWorkHours?'yes':'no'}\nCalendar: ${sendInvite?`Event "${payload.address}" from ${payload.scheduledAt} to ${payload.scheduledAt?new Date(new Date(payload.scheduledAt).getTime()+60*60*1000).toISOString():'+1hr'} with link ${link} and notes ${notes} (never use arnavmody@gmail.com)`:'(no invite)'}`;
+  let copySummary = `ADD_APARTMENT
+Tab: ${tab}
+Status: ${status}
+Address: ${payload.address}
+Link: ${link||'(none)'}
+Notes: ${notes||'(none)'}
+ScheduledAt: ${payload.scheduledAt||'(none)'}
+SendInvite: ${sendInvite?'yes':'no'}
+Attendees: ${attendees.join(', ')}
+Weekday9to6: ${isWeekdayWorkHours?'yes':'no'}
+Calendar: ${sendInvite?`Event "${payload.address}" from ${payload.scheduledAt} to ${payload.scheduledAt?new Date(new Date(payload.scheduledAt).getTime()+60*60*1000).toISOString():'+1hr'} with link ${link} and notes ${notes} (never use arnavmody@gmail.com)`:'(no invite)'}`;
 
   if(sendInvite){
     localStorage.setItem('LAST_PENDING_INVITE', copySummary);
@@ -657,7 +734,13 @@ document.getElementById('list').addEventListener('click', async (e)=>{
   }else if(action==='copy-fb'){
     const apt = allData().find(a=>String(a.id)===String(id));
     const fb = text || apt?.feedback?.text || '';
-    const summary=`FEEDBACK\nListingId: ${id}\nAddress: ${apt?.address||'unknown'}\nBuilding: ${apt?.building_name||'unknown'}\nLink: ${apt?.url||apt?.originalUrl||''}\nFeedback: ${fb||'(no text)'}\nMoveTo: Seen`;
+    const summary=`FEEDBACK
+ListingId: ${id}
+Address: ${apt?.address||'unknown'}
+Building: ${apt?.building_name||'unknown'}
+Link: ${apt?.url||apt?.originalUrl||''}
+Feedback: ${fb||'(no text)'}
+MoveTo: Seen`;
     try{ await navigator.clipboard.writeText(summary); showToast('Feedback copied — paste to Tintin'); }catch{
       const box=document.getElementById('f-copy');
       box.textContent=summary; box.classList.add('show'); openAdd(); showToast('Summary below — copy it');
