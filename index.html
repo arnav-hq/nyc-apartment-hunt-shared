@@ -151,7 +151,7 @@
 
   <div id="list"></div>
 
-  <footer>Built from NYC Apartment Hunt HQ — tabs auto-update when you drop a link + time (→ Scheduled) or give feedback (→ Seen)<br>Your photos always prioritized. Up to 5 shown, swipe / dots. Feedback saves instantly to this browser. Use Copy summary to send to Tintin/HQ if needed.</footer>
+  <footer>Built from NYC Apartment Hunt HQ — tabs auto-update when you drop a link + time (→ Scheduled) or give feedback (→ Seen)<br>Your photos always prioritized. Up to 10 shown, swipe / dots. Feedback saves instantly to this browser. Use Copy summary to send to Tintin/HQ if needed.</footer>
   <div id="toast" class="toast"></div>
 </div>
 
@@ -160,13 +160,34 @@
 const SEEN = [
   {
     "address": "150 West 56th Street #2810",
-    "baths": 1, "beds": 1,
+    "baths": 1,
+    "beds": 1,
     "building_name": "CitySpire",
-    "feedback": {"text": "We really really liked the apartment in the building. There was a balcony, which was really nice. The apartment layout was a little odd but it was a good size with good storage. There was a weird Murphy bed situation going on, which was a little strange, but overall it was a beautiful apartment. The building was also really great. It had a pool and a gym, which we could see ourselves using, and it was a pretty luxurious building. The issue with this is that the move-in date is going to be too soon for us and also she only wants to give it out furnished, which we are not going to do for sure. In reality this is not going to be an option for her but this is definitely a building that we like and would like to keep our eyes on", "pros": ["really liked", "balcony nice", "good size", "good storage", "beautiful apartment", "building great", "pool", "gym", "luxurious", "building to watch"], "cons": ["layout odd", "Murphy bed strange", "move-in too soon", "furnished only"]},
+    "feedback": {
+      "text": "We really really liked the apartment in the building. There was a balcony, which was really nice. The apartment layout was a little odd but it was a good size with good storage. There was a weird Murphy bed situation going on, which was a little strange, but overall it was a beautiful apartment. The building was also really great. It had a pool and a gym, which we could see ourselves using, and it was a pretty luxurious building. The issue with this is that the move-in date is going to be too soon for us and also she only wants to give it out furnished, which we are not going to do for sure. In reality this is not going to be an option for her but this is definitely a building that we like and would like to keep our eyes on",
+      "pros": [
+        "really liked",
+        "balcony nice",
+        "good size",
+        "good storage",
+        "beautiful apartment",
+        "building great",
+        "pool",
+        "gym",
+        "luxurious",
+        "building to watch"
+      ],
+      "cons": [
+        "layout odd",
+        "Murphy bed strange",
+        "move-in too soon",
+        "furnished only"
+      ]
+    },
     "id": 4,
     "neighborhood": "Midtown",
     "originalUrl": "https://streeteasy.com/rental/5096758?utm_campaign=rental_listing&utm_medium=app_share&utm_source=ios&utm_term=c902da07e1ad464",
-    "photos": ["https://photos.zillowstatic.com/fp/afe9145338e0c29cf6f66f20921abb76-full.webp", "https://photos.zillowstatic.com/fp/f1f060ce3f42eafb41720911c166b2cb-full.webp"],
+    "photos": [],
     "rent": 7000,
     "status": "viewed",
     "scheduledAt": null,
@@ -183,13 +204,32 @@ const SEEN = [
   },
   {
     "address": "10 West 65th Street #4N",
-    "baths": 1, "beds": 1,
+    "baths": 1,
+    "beds": 1,
     "building_name": null,
-    "feedback": {"text": "the apartment was really big. The living room was big and the kitchen was big. We really liked the size and the storage. The building was a little old but it's fine. The hallways smelled like dog. The other issue with apartment 4N is that even though it's south-facing, the windows just faced the building so the view was not great. I'm not sure how much bright light that will be and we can't control the heat I didn't like that the view was straight into a building. I don't need a big view but it was a little tight to the next window right over. The layout could have been a little better but I'm not complaining about that.", "pros": ["really big", "living room big", "kitchen big", "size and storage"], "cons": ["building a little old", "hallways smelled like dog", "south-facing but faced building", "view not great", "tight to next window", "can't control heat", "unsure light", "layout could be better"]},
+    "feedback": {
+      "text": "the apartment was really big. The living room was big and the kitchen was big. We really liked the size and the storage. The building was a little old but it's fine. The hallways smelled like dog. The other issue with apartment 4N is that even though it's south-facing, the windows just faced the building so the view was not great. I'm not sure how much bright light that will be and we can't control the heat I didn't like that the view was straight into a building. I don't need a big view but it was a little tight to the next window right over. The layout could have been a little better but I'm not complaining about that.",
+      "pros": [
+        "really big",
+        "living room big",
+        "kitchen big",
+        "size and storage"
+      ],
+      "cons": [
+        "building a little old",
+        "hallways smelled like dog",
+        "south-facing but faced building",
+        "view not great",
+        "tight to next window",
+        "can't control heat",
+        "unsure light",
+        "layout could be better"
+      ]
+    },
     "id": 3,
     "neighborhood": "Lincoln Square",
     "originalUrl": "https://streeteasy.com/rental/3916750",
-    "photos": ["https://photos.zillowstatic.com/fp/2aac3db111d144b9c2e4aee94c3ac54d-full.webp", "https://photos.zillowstatic.com/fp/42c6a6846a7321b8b1e2c48f10a48528-full.webp", "https://photos.zillowstatic.com/fp/67576b06c8f4cdbacc2b46bc6dc67655-full.webp"],
+    "photos": [],
     "rent": 6500,
     "status": "viewed",
     "scheduledAt": null,
@@ -203,13 +243,16 @@ const SEEN = [
   },
   {
     "address": "260 West 54th Street #22A",
-    "baths": 1, "beds": 1,
+    "baths": 1,
+    "beds": 1,
     "building_name": "The Marc",
-    "feedback": {"text": "We didn't like it. Finishings were not good."},
+    "feedback": {
+      "text": "We didn't like it. Finishings were not good."
+    },
     "id": 2,
     "neighborhood": "Midtown",
     "originalUrl": "https://streeteasy.com/rental/5117991",
-    "photos": ["https://photos.zillowstatic.com/fp/0f3e7d7dc18d9540f902e2c7d064343b-full.webp", "https://photos.zillowstatic.com/fp/a7afc5cf8a44c6b65bb1c5d502fb6dc6-full.webp", "https://photos.zillowstatic.com/fp/26c29399ae03d27611a0263f363eed64-full.webp", "https://photos.zillowstatic.com/fp/74307f62cfb44b1a4e7271ae29482997-full.webp", "https://photos.zillowstatic.com/fp/ca5a469737e63223734969fe8a6cd602-full.webp", "https://photos.zillowstatic.com/fp/d52d1c9199a1738fb88bea4a323621d7-full.webp"],
+    "photos": [],
     "rent": 5618,
     "status": "viewed",
     "scheduledAt": null,
@@ -217,32 +260,41 @@ const SEEN = [
     "url": "https://streeteasy.com/rental/5117991",
     "userPhotos": [],
     "viewedAt": "2026-07-31T00:00:00.000Z"
+  },
+  {
+    "address": "350 West 50th Street #6U",
+    "baths": null,
+    "beds": 1,
+    "building_name": "Two WorldWide Plaza",
+    "feedback": {
+      "text": "I really liked it. The outdoor space is wonderful. The living room is a little bit small but I think it's okay. We may have to figure out something for additional storage but I think we can manage that. I don't like that it's on 50th Street. It's a little bit south. Also the move-in date right now is October 1st so we may want to push that a bit to try and do mid-October. Rachel is going to see it tomorrow to see if she also likes it. Rachel is my girlfriend, by the way, who I'm seeing apartments with",
+      "notes": "Oct 1 currently, want mid-Oct. Rachel (girlfriend) to see tomorrow.",
+      "pros": [],
+      "cons": []
+    },
+    "id": 5,
+    "neighborhood": "Hell's Kitchen",
+    "originalUrl": "https://streeteasy.com/rental/5119063?utm_campaign=rental_listing&utm_medium=app_share&utm_source=ios&utm_term=0bc7f1b138ad463",
+    "photos": [],
+    "rent": null,
+    "status": "viewed",
+    "scheduledAt": null,
+    "unit": "6U",
+    "url": "https://streeteasy.com/rental/5119063",
+    "userPhotos": [],
+    "viewedAt": "2026-08-04T14:47:57-04:00"
   }
 ];
 const SCHEDULED = [
   {
-    "address": "350 West 50th Street #6U",
-    "baths": null, "beds": 1,
-    "building_name": "Two WorldWide Plaza",
-    "id": 5,
-    "neighborhood": "Hell's Kitchen",
-    "originalUrl": "https://streeteasy.com/rental/5119063?utm_campaign=rental_listing&utm_medium=app_share&utm_source=ios&utm_term=0bc7f1b138ad463",
-    "photos": ["https://photos.zillowstatic.com/fp/9b74038d35f3b2af965f3ad27e28d3a3-full.webp", "https://photos.zillowstatic.com/fp/b044f46a6d8a0c30ef17fd33c4e188df-full.webp", "https://photos.zillowstatic.com/fp/e8b4dbac190dcd118ebc6686dc666ab0-full.webp"],
-    "rent": null,
-    "status": "scheduled",
-    "scheduledAt": "2026-08-04T16:30:00.000Z",
-    "url": "https://streeteasy.com/rental/5119063",
-    "userPhotos": [],
-    "viewedAt": null
-  },
-  {
     "address": "One Columbus Place, New York, NY 10019",
-    "baths": 1, "beds": 1,
+    "baths": 1,
+    "beds": 1,
     "building_name": "One Columbus Place",
     "id": 6,
     "neighborhood": "Hell's Kitchen",
     "originalUrl": "https://streeteasy.com/rental/5117632?utm_campaign=rental_listing&utm_medium=app_share&utm_source=ios&utm_term=4c314b4099484d3",
-    "photos": ["https://photos.zillowstatic.com/fp/bb721901b298ff3b4a0551453b7bdd68-full.webp", "https://photos.zillowstatic.com/fp/cb412f2861d21a078c7c1b5e71e4ddcf-full.webp", "https://photos.zillowstatic.com/fp/8f08783f71091ba4b0e17ebb69f3764f-full.webp"],
+    "photos": [],
     "rent": null,
     "status": "scheduled",
     "scheduledAt": "2026-08-07T19:30:00.000Z",
@@ -462,11 +514,11 @@ function render(){
 
   data.forEach(apt=>{
     const displayPhotos = (apt.userPhotos && apt.userPhotos.length>0)
-      ? [...apt.userPhotos.slice(0,5), ...apt.photos.slice(0, Math.max(0,5-apt.userPhotos.length))].slice(0,5)
-      : (apt.photos||[]).slice(0,5);
+      ? [...apt.userPhotos.slice(0,10), ...apt.photos.slice(0, Math.max(0,10-apt.userPhotos.length))].slice(0,10)
+      : (apt.photos||[]).slice(0,10);
     const hasUser = apt.userPhotos && apt.userPhotos.length>0;
     const total = (apt.photos?.length||0)+(hasUser?apt.userPhotos.length:0);
-    const extra = total>5 ? total-5 : 0;
+    const extra = total>10 ? total-10 : 0;
 
     const card=document.createElement('div');
     card.className='card';
