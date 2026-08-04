@@ -18,7 +18,8 @@
   header p{margin:0;color:var(--muted);font-size:13px}
   .fab{position:absolute;top:16px;right:4px;width:40px;height:40px;border-radius:999px;border:1px solid var(--line);background:#111;color:#fff;font-size:22px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.15);cursor:pointer}
   .fab:active{transform:scale(.96)}
-  .gear{position:absolute;top:16px;right:52px;width:36px;height:36px;border-radius:999px;border:1px solid var(--line);background:#fff;color:#333;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .gear{position:absolute;top:16px;right:52px;width:36px;height:36px;border-radius:999px;border:1px solid var(--line);background:#fff;color:#333;font-size:16px;display:none;align-items:center;justify-content:center;cursor:pointer}
+  .gear.show{display:flex}
   .modal{position:fixed;inset:0;z-index:9999;display:none}
   .modal.show{display:block}
   .modalBg{position:absolute;inset:0;background:rgba(18,18,20,.32);backdrop-filter:blur(6px)}
@@ -122,7 +123,7 @@
         <div class="chk"><input id="f-invite" type="checkbox"><label for="f-invite">Send invite — schedule a tour + create Google Calendar invite?</label></div>
         <div id="f-dt-wrap" style="display:none" class="f"><label>Date & time of tour</label><input id="f-dt" type="datetime-local"></div>
         <button id="f-submit" class="btn">Add to site</button>
-        <div class="hint" id="f-hint">Always to rjberg2021@gmail.com, and to arnavmody@meta.com only if weekday 9am-6pm ET (never to gmail). Unchecked = just adds to this site (Interested by default). Checked = also creates calendar event — Title = address, body = link + notes, 1hr long. Girlfriend can add here directly — no login. If you set a token in ⚙, it also saves to the shared file instantly.</div>
+        <div class="hint" id="f-hint">Always to rjberg2021@gmail.com, and to arnavmody@meta.com only if weekday 9am-6pm ET (never to gmail). Unchecked = just adds to this site (Interested by default). Checked = also creates calendar event — Title = address, body = link + notes, 1hr long. Girlfriend can add here directly — no login.</div>
         <div id="f-copy" class="copyBox"></div>
         <button id="f-copy-btn" class="miniBtn" style="display:none;margin-top:8px">Copy summary to send to Tintin</button>
       </div>
@@ -150,7 +151,7 @@
 
   <div id="list"></div>
 
-  <footer>Built from NYC Apartment Hunt HQ — tabs auto-update when you drop a link + time (→ Scheduled) or give feedback (→ Seen)<br>Your photos always prioritized. Up to 5 shown, swipe / dots. Feedback saves instantly to this browser, and when token is set, also to shared file GitHub (repo same file). When both of you have token, feedback appears instantly; without token, use Copy summary to send to Tintin/HQ.</footer>
+  <footer>Built from NYC Apartment Hunt HQ — tabs auto-update when you drop a link + time (→ Scheduled) or give feedback (→ Seen)<br>Your photos always prioritized. Up to 5 shown, swipe / dots. Feedback saves instantly to this browser. Use Copy summary to send to Tintin/HQ if needed.</footer>
   <div id="toast" class="toast"></div>
 </div>
 
@@ -318,7 +319,7 @@ async function mergeRemote(){
   const statusEl = document.getElementById('syncStatus');
   try{
     const res = await loadRemote();
-    if(!res || !res.obj) { if(statusEl) statusEl.textContent = getToken() ? '● sync ready, no remote yet' : '● local only'; return; }
+    if(!res || !res.obj) { if(statusEl) statusEl.textContent = '● local only'; return; }
     REMOTE_SHA = res.sha || null;
     const o = res.obj;
     if(Array.isArray(o.custom)){
@@ -344,7 +345,7 @@ async function mergeRemote(){
       localStorage.setItem(LS_FB, JSON.stringify(FB_STORE));
       localStorage.setItem(LS_CUSTOM, JSON.stringify(CUSTOM));
     }
-    if(statusEl) statusEl.textContent = getToken() ? `● synced • ${new Date(o.updatedAt||Date.now()).toLocaleTimeString()}` : '● shared available';
+    if(statusEl) statusEl.textContent = `● shared • ${new Date(o.updatedAt||Date.now()).toLocaleTimeString()}`;
   }catch(e){
     if(statusEl) statusEl.textContent = '● local only';
   }
@@ -510,8 +511,8 @@ function render(){
             <button class="miniBtn primary" data-action="save-fb" data-id="${apt.id}">Save feedback</button>
             <button class="miniBtn" data-action="copy-fb" data-id="${apt.id}">Copy summary to send to Tintin</button>
           </div>
-          <div class="feedbackSaved" id="fbsaved-${apt.id}">Saved ✓ • Local + ${getToken()?'shared':'copy to sync'}. Reload to see on other phone if shared.</div>
-          <div class="hint">If you set token in ⚙, Save writes to shared file instantly and other phone sees it after reload.</div>
+          <div class="feedbackSaved" id="fbsaved-${apt.id}">Saved ✓ • Local. Reload to see on your other device if shared.</div>
+          <div class="hint">Feedback saves locally and appears after reload. Use Copy to send to Tintin/HQ.</div>
         </div>
       </div>
     `;
@@ -547,7 +548,7 @@ closeModal.addEventListener('click', closeAdd);
 modalBg.addEventListener('click', closeAdd);
 document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeAdd(); closeSync(); }});
 
-// ----- Sync settings modal -----
+// ----- Sync settings modal (hidden by default per access feedback) -----
 const gear=document.getElementById('gear');
 const syncM=document.getElementById('syncModal');
 const syncBg=document.getElementById('syncBg');
@@ -559,6 +560,15 @@ function openSync(){
   syncM.classList.add('show');
 }
 function closeSync(){ syncM.classList.remove('show'); }
+// Only show gear if ?sync or ?advanced or token already set (opt-in)
+(function(){
+  const hasToken = !!getToken();
+  const params = new URLSearchParams(location.search);
+  const wantsSync = params.has('sync') || params.has('advanced') || params.has('token');
+  if(hasToken || wantsSync){
+    gear.classList.add('show');
+  }
+})();
 gear.addEventListener('click', openSync);
 closeSyncBtn.addEventListener('click', closeSync);
 syncBg.addEventListener('click', closeSync);
@@ -719,7 +729,7 @@ document.getElementById('list').addEventListener('click', async (e)=>{
       if(ret.ok) showToast('Feedback saved locally + shared ✓');
       else showToast('Feedback saved locally, shared failed: '+(ret.reason||''));
     }else{
-      showToast('Feedback saved locally ✓ — set token in ⚙ to share');
+      showToast('Feedback saved locally ✓');
     }
     render();
     setTimeout(()=>{ const el=document.getElementById(`ta-${id}`); if(el) el.value=text; },100);
