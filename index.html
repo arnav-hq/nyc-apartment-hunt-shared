@@ -165,7 +165,7 @@ const SEEN = [
     "id": 4,
     "neighborhood": "Midtown",
     "originalUrl": "https://streeteasy.com/rental/5096758?utm_campaign=rental_listing&utm_medium=app_share&utm_source=ios&utm_term=c902da07e1ad464",
-    "photos": ["og/1785800133713-7lyvg8.jpg"],
+    "photos": [],
     "rent": 7000,
     "status": "viewed",
     "scheduledAt": null,
@@ -224,7 +224,7 @@ const SCHEDULED = [
     "id": 5,
     "neighborhood": "Hell's Kitchen",
     "originalUrl": "https://streeteasy.com/rental/5119063?utm_campaign=rental_listing&utm_medium=app_share&utm_source=ios&utm_term=0bc7f1b138ad463",
-    "photos": ["og/1785800946250-gueoo9.jpg"],
+    "photos": [],
     "rent": null,
     "status": "scheduled",
     "scheduledAt": "2026-08-04T16:30:00.000Z",
@@ -239,7 +239,7 @@ const SCHEDULED = [
     "id": 6,
     "neighborhood": "Hell's Kitchen",
     "originalUrl": "https://streeteasy.com/rental/5117632?utm_campaign=rental_listing&utm_medium=app_share&utm_source=ios&utm_term=4c314b4099484d3",
-    "photos": ["og/1785800960275-dtbyqu.jpg"],
+    "photos": [],
     "rent": null,
     "status": "scheduled",
     "scheduledAt": "2026-08-07T19:30:00.000Z",
@@ -662,17 +662,7 @@ document.getElementById('f-submit').addEventListener('click', async ()=>{
     }
     if(isWeekdayWorkHours) attendees.push('arnavmody@meta.com');
   }
-  let copySummary = `ADD_APARTMENT
-Tab: ${tab}
-Status: ${status}
-Address: ${payload.address}
-Link: ${link||'(none)'}
-Notes: ${notes||'(none)'}
-ScheduledAt: ${payload.scheduledAt||'(none)'}
-SendInvite: ${sendInvite?'yes':'no'}
-Attendees: ${attendees.join(', ')}
-Weekday9to6: ${isWeekdayWorkHours?'yes':'no'}
-Calendar: ${sendInvite?`Event "${payload.address}" from ${payload.scheduledAt} to ${payload.scheduledAt?new Date(new Date(payload.scheduledAt).getTime()+60*60*1000).toISOString():'+1hr'} with link ${link} and notes ${notes} (never use arnavmody@gmail.com)`:'(no invite)'}`;
+  let copySummary = `ADD_APARTMENT\nTab: ${tab}\nStatus: ${status}\nAddress: ${payload.address}\nLink: ${link||'(none)'}\nNotes: ${notes||'(none)'}\nScheduledAt: ${payload.scheduledAt||'(none)'}\nSendInvite: ${sendInvite?'yes':'no'}\nAttendees: ${attendees.join(', ')}\nWeekday9to6: ${isWeekdayWorkHours?'yes':'no'}\nCalendar: ${sendInvite?`Event "${payload.address}" from ${payload.scheduledAt} to ${payload.scheduledAt?new Date(new Date(payload.scheduledAt).getTime()+60*60*1000).toISOString():'+1hr'} with link ${link} and notes ${notes} (never use arnavmody@gmail.com)`:'(no invite)'}`;
 
   if(sendInvite){
     localStorage.setItem('LAST_PENDING_INVITE', copySummary);
@@ -734,13 +724,7 @@ document.getElementById('list').addEventListener('click', async (e)=>{
   }else if(action==='copy-fb'){
     const apt = allData().find(a=>String(a.id)===String(id));
     const fb = text || apt?.feedback?.text || '';
-    const summary=`FEEDBACK
-ListingId: ${id}
-Address: ${apt?.address||'unknown'}
-Building: ${apt?.building_name||'unknown'}
-Link: ${apt?.url||apt?.originalUrl||''}
-Feedback: ${fb||'(no text)'}
-MoveTo: Seen`;
+    const summary=`FEEDBACK\nListingId: ${id}\nAddress: ${apt?.address||'unknown'}\nBuilding: ${apt?.building_name||'unknown'}\nLink: ${apt?.url||apt?.originalUrl||''}\nFeedback: ${fb||'(no text)'}\nMoveTo: Seen`;
     try{ await navigator.clipboard.writeText(summary); showToast('Feedback copied — paste to Tintin'); }catch{
       const box=document.getElementById('f-copy');
       box.textContent=summary; box.classList.add('show'); openAdd(); showToast('Summary below — copy it');
