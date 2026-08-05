@@ -86,6 +86,13 @@
   .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 14px;border-radius:999px;font-size:12.5px;box-shadow:0 8px 24px rgba(0,0,0,.25);display:none;z-index:9999}
   .toast.show{display:block}
   .syncBadge{font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:#fff;display:inline-flex;gap:6px;align-items:center;margin-left:8px}
+
+  .your-home-btn{position:absolute;top:16px;right:96px;height:36px;padding:0 14px;border-radius:9999px;background:#FFFEFC;border:1px solid var(--line,#ddd);color:#111;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.06);white-space:nowrap;z-index:3}
+  .your-home-btn:active{transform:scale(.97)}
+  @media (max-width:380px){ .your-home-btn{right:88px;padding:0 10px;font-size:11px} }
+  #yourHomeModal{display:none;position:fixed;inset:0;z-index:60;place-items:center;background:rgba(0,0,0,0.32);backdrop-filter:blur(4px)}
+  #yourHomeModal.open{display:grid}
+
 </style>
 </head>
 <body>
@@ -94,6 +101,7 @@
     <h1>Apartments</h1>
     <p>Shared from Arnav — updates live from HQ <span id="syncStatus" class="syncBadge">● local only</span></p>
     <button class="gear" id="gear" aria-label="Sync settings">⚙</button>
+    <button id="yourHomeBtn" class="your-home-btn" style="position:absolute;top:16px;right:96px;height:36px;padding:0 14px;border-radius:9999px;background:#FFFEFC;border:1px solid #ddd;color:#111;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.06);white-space:nowrap;z-index:3">🏠 Your Home</button>
     <button class="fab" id="fab" aria-label="Add listing">+</button>
     <div class="tabs">
       <button data-tab="scheduled" class="active">Scheduled <span id="cnt-sched"></span></button>
@@ -187,7 +195,7 @@ const SEEN = [
     "id": 4,
     "neighborhood": "Midtown",
     "originalUrl": "https://streeteasy.com/rental/5096758?utm_campaign=rental_listing&utm_medium=app_share&utm_source=ios&utm_term=c902da07e1ad464",
-    "photos": [],
+    "photos": ["https://photos.zillowstatic.com/fp/afe9145338e0c29cf6f66f20921abb76-se_extra_large_1500_800.webp", "https://photos.zillowstatic.com/fp/f1f060ce3f42eafb41720911c166b2cb-se_extra_large_1500_800.webp", "https://photos.zillowstatic.com/fp/29197582e11908b4a652e101b9a73de9-se_extra_large_1500_800.webp", "https://photos.zillowstatic.com/fp/e48b2c0bb58cd849482d2c0877cdc0d5-se_extra_large_1500_800.webp", "https://photos.zillowstatic.com/fp/d19d8eaf355ea3652b7a3afee1c67f56-se_extra_large_1500_800.webp", "https://photos.zillowstatic.com/fp/fc7010e27f909faec110bf7ce9921159-se_extra_large_1500_800.webp", "https://photos.zillowstatic.com/fp/97113e125286089504272aa60b0b0d3f-se_extra_large_1500_800.webp", "https://photos.zillowstatic.com/fp/65174f4911502a52a04fd04c070352dd-se_extra_large_1500_800.webp", "https://photos.zillowstatic.com/fp/0a4792e67ad67c0d24db1b4997103d3a-se_extra_large_1500_800.webp", "https://photos.zillowstatic.com/fp/44f1f1b03ee1456687bc4479daca4fa0-se_extra_large_1500_800.webp"],
     "rent": 7000,
     "status": "viewed",
     "scheduledAt": null,
@@ -229,7 +237,7 @@ const SEEN = [
     "id": 3,
     "neighborhood": "Lincoln Square",
     "originalUrl": "https://streeteasy.com/rental/3916750",
-    "photos": [],
+    "photos": ["https://photos.zillowstatic.com/fp/2aac3db111d144b9c2e4aee94c3ac54d-se_large_800_400.webp", "https://photos.zillowstatic.com/fp/42c6a6846a7321b8b1e2c48f10a48528-se_large_800_400.webp", "https://photos.zillowstatic.com/fp/67576b06c8f4cdbacc2b46bc6dc67655-se_large_800_400.webp", "https://photos.zillowstatic.com/fp/fedd6790ed427d7fc42e360417cec94e-se_large_800_400.webp", "https://photos.zillowstatic.com/fp/e76047dbb9c3540ca286fb48103ab1e1-se_large_800_400.webp", "https://photos.zillowstatic.com/fp/66d604d44ea9c2604905747f606286a8-se_large_800_400.webp", "https://photos.zillowstatic.com/fp/c5977234ba8b7a5f7fa50a3ee726d1a3-se_large_800_400.webp", "https://photos.zillowstatic.com/fp/9b3085a1aee64896b6df44a3b962dfc0-se_large_800_400.webp", "https://photos.zillowstatic.com/fp/74a10d41a147255bae584dd2a5a337e2-se_large_800_400.webp", "https://photos.zillowstatic.com/fp/c4b6478a6179b8a11d10ca4adb27d884-se_large_800_400.webp"],
     "rent": 6500,
     "status": "viewed",
     "scheduledAt": null,
@@ -252,7 +260,7 @@ const SEEN = [
     "id": 2,
     "neighborhood": "Midtown",
     "originalUrl": "https://streeteasy.com/rental/5117991",
-    "photos": [],
+    "photos": ["https://photos.zillowstatic.com/fp/0f3e7d7dc18d9540f902e2c7d064343b-full.webp", "https://photos.zillowstatic.com/fp/a7afc5cf8a44c6b65bb1c5d502fb6dc6-full.webp", "https://photos.zillowstatic.com/fp/26c29399ae03d27611a0263f363eed64-full.webp", "https://photos.zillowstatic.com/fp/74307f62cfb44b1a4e7271ae29482997-full.webp", "https://photos.zillowstatic.com/fp/ca5a469737e63223734969fe8a6cd602-full.webp", "https://photos.zillowstatic.com/fp/d52d1c9199a1738fb88bea4a323621d7-full.webp", "https://photos.zillowstatic.com/fp/141f3421b1fb70f48647068d339c1f1f-full.webp", "https://photos.zillowstatic.com/fp/c393ca43dad9d7ffcb242b28e4f5b7eb-full.webp", "https://photos.zillowstatic.com/fp/99c543506fde2adb2d0f2d5a3f589e29-full.webp", "https://photos.zillowstatic.com/fp/a42ebfb5b9c16af920b031983c108614-full.webp"],
     "rent": 5618,
     "status": "viewed",
     "scheduledAt": null,
@@ -267,8 +275,8 @@ const SEEN = [
     "beds": 1,
     "building_name": "Two WorldWide Plaza",
     "feedback": {
-      "text": "I really liked it. The outdoor space is wonderful. The living room is a little bit small but I think it's okay. We may have to figure out something for additional storage but I think we can manage that. I don't like that it's on 50th Street. It's a little bit south. Also the move-in date right now is October 1st so we may want to push that a bit to try and do mid-October. Rachel is going to see it tomorrow to see if she also likes it. Rachel is my girlfriend, by the way, who I'm seeing apartments with",
-      "notes": "Oct 1 currently, want mid-Oct. Rachel (girlfriend) to see tomorrow.",
+      "text": "Liked it overall. Outdoor space is wonderful. Living room small but ok, storage doable with planning. 50th St a little south. Lease Oct 1 but hoping for mid-Oct. Rachel to see it tomorrow.",
+      "notes": "Oct 1 currently, want mid-Oct. Rachel to see 8/5.",
       "pros": [],
       "cons": []
     },
@@ -294,7 +302,7 @@ const SCHEDULED = [
     "id": 6,
     "neighborhood": "Hell's Kitchen",
     "originalUrl": "https://streeteasy.com/rental/5117632?utm_campaign=rental_listing&utm_medium=app_share&utm_source=ios&utm_term=4c314b4099484d3",
-    "photos": [],
+    "photos": ["https://photos.zillowstatic.com/fp/bb721901b298ff3b4a0551453b7bdd68-full.webp", "https://photos.zillowstatic.com/fp/cb412f2861d21a078c7c1b5e71e4ddcf-full.webp", "https://photos.zillowstatic.com/fp/8f08783f71091ba4b0e17ebb69f3764f-full.webp", "https://photos.zillowstatic.com/fp/3228ca911e62281fb1bfd52f5f79000c-full.webp", "https://photos.zillowstatic.com/fp/d98acf9c09429843131bd1e55f2af5f9-full.webp", "https://photos.zillowstatic.com/fp/0c052e88c7b07407474b8ba4d9e0ddf5-full.webp", "https://photos.zillowstatic.com/fp/72cf592044c23333afba4626bc71568a-full.webp", "https://photos.zillowstatic.com/fp/baeac51ecd94115fd837f4311429f750-full.webp", "https://photos.zillowstatic.com/fp/47c0bd9ff0d7a4cdf095bb95a96f0d29-full.webp", "https://photos.zillowstatic.com/fp/da2bf24393d34f29268942456a579eef-full.webp"],
     "rent": null,
     "status": "scheduled",
     "scheduledAt": "2026-08-07T19:30:00.000Z",
@@ -797,6 +805,379 @@ document.getElementById('list').addEventListener('click', async (e)=>{
 });
 
 mergeRemote().then(()=>render()).finally(()=>render());
+
+
+// --- Your Home Measurements ---
+const HOME_DEFAULT = null;
+function loadHome(){
+  try{
+    const raw = localStorage.getItem('homeMeasurements');
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(parsed && typeof parsed === 'object') return parsed;
+    }
+  }catch(e){}
+  if(window.HOME_MEASUREMENTS && typeof window.HOME_MEASUREMENTS === 'object' && Object.keys(window.HOME_MEASUREMENTS).length){
+    return window.HOME_MEASUREMENTS;
+  }
+  return HOME_DEFAULT;
+}
+window.HOME_MEASUREMENTS = loadHome() || HOME_DEFAULT;
+
+function parseHomeArea(str){
+  if(!str) return null;
+  const m = String(str).match(/(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)/);
+  if(!m) return null;
+  const a = parseFloat(m[1]), b = parseFloat(m[2]);
+  if(isNaN(a)||isNaN(b)) return null;
+  return {a,b,area:a*b};
+}
+
+function renderHome(){
+  const el = document.getElementById('yourHomeDisplay');
+  if(!el) return;
+  const data = window.HOME_MEASUREMENTS;
+  if(!data || (!data.livingRoom && !data.couch && !data.notes)){
+    el.innerHTML = "<div style='color:#666;font-size:12px;border:1px dashed #ddd;padding:12px;border-radius:8px'>No measurements yet — paste them when you measure. Example: Living Room 14ft x 11ft, Couch 84\"</div>";
+    return;
+  }
+  let html = "<div style='font-size:13px;line-height:1.5;color:#222'>";
+  if(data.livingRoom){
+    const pa = parseHomeArea(data.livingRoom);
+    html += "<div style='margin-bottom:8px'><span style='font-weight:600;color:#111'>Living Room:</span> "+(data.livingRoom.replace(/</g,'&lt;'))+"";
+    if(pa){
+      html += " <span style='color:#666;font-size:11px'>— "+pa.a+" × "+pa.b+" ft = "+pa.area.toFixed(0)+" sqft</span>";
+    }
+    html += "</div>";
+  }
+  if(data.couch){
+    html += "<div style='margin-bottom:8px'><span style='font-weight:600;color:#111'>Couch / Sofa:</span> "+(String(data.couch).replace(/</g,'&lt;'))+" </div>";
+  }
+  if(data.notes){
+    const notesEsc = String(data.notes).replace(/</g,'&lt;').replace(/\n/g,'<br>');
+    html += "<div style='margin-bottom:8px'><span style='font-weight:600;color:#111'>Other / Notes:</span><br><span style='white-space:pre-wrap;color:#333'>"+notesEsc+"</span></div>";
+  }
+  if(data.updatedAt){
+    try{
+      const d = new Date(data.updatedAt);
+      html += "<div style='margin-top:8px;font-size:11px;color:#888'>Updated: "+d.toLocaleString()+"</div>";
+    }catch(e){}
+  }
+  html += "</div>";
+  el.innerHTML = html;
+}
+
+function saveHome(){
+  const lr = (document.getElementById('hm_lr')?.value||'').trim();
+  const couch = (document.getElementById('hm_couch')?.value||'').trim();
+  const notes = (document.getElementById('hm_notes')?.value||'').trim();
+  const obj = {livingRoom: lr, couch: couch, notes: notes, updatedAt: new Date().toISOString()};
+  try{
+    localStorage.setItem('homeMeasurements', JSON.stringify(obj));
+  }catch(e){}
+  window.HOME_MEASUREMENTS = obj;
+  renderHome();
+  const msg = document.getElementById('hm_savedMsg');
+  if(msg){ msg.style.display='block'; setTimeout(()=>{ msg.style.display='none'; }, 2000); }
+}
+
+(function initYourHome(){
+  const btn = document.getElementById('yourHomeBtn');
+  const modal = document.getElementById('yourHomeModal');
+  const closeBtn = document.getElementById('yourHomeClose');
+  const saveBtn = document.getElementById('hm_save');
+  if(!modal) return;
+  function openHome(){
+    const cur = window.HOME_MEASUREMENTS || loadHome();
+    if(cur){
+      const lr = document.getElementById('hm_lr'); if(lr) lr.value = cur.livingRoom||'';
+      const ch = document.getElementById('hm_couch'); if(ch) ch.value = cur.couch||'';
+      const nt = document.getElementById('hm_notes'); if(nt) nt.value = cur.notes||'';
+    }
+    renderHome();
+    modal.style.display='grid';
+    modal.classList.add('open');
+  }
+  function closeHome(){
+    modal.style.display='none';
+    modal.classList.remove('open');
+  }
+  if(btn) btn.addEventListener('click', openHome);
+  if(closeBtn) closeBtn.addEventListener('click', closeHome);
+  if(saveBtn) saveBtn.addEventListener('click', saveHome);
+  modal.addEventListener('click', (e)=>{ if(e.target===modal) closeHome(); });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && modal.style.display!=='none') closeHome(); });
+})();
+// --- End Your Home ---
+
 </script>
+
+<div id="yourHomeModal" class="modalBg" style="display:none;position:fixed;inset:0;z-index:60;place-items:center;background:rgba(0,0,0,0.3);backdrop-filter:blur(4px)">
+  <div class="modalCard" style="background:#FFFEFC;max-width:480px;width:90%;border-radius:20px;padding:20px;border:1px solid #ddd;max-height:90vh;overflow:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="font-size:18px;font-weight:600">🏠 Your Home — Measurements</h3>
+      <button id="yourHomeClose" style="height:28px;width:28px;border-radius:9999px;background:#eee">✕</button>
+    </div>
+    <div id="yourHomeDisplay" style="margin-top:12px"></div>
+    <div style="margin-top:16px;border-top:1px solid #eee;padding-top:12px">
+      <h4 style="font-size:12px;text-transform:uppercase;color:#888;margin-bottom:8px">Edit measurements</h4>
+      <label style="display:block;margin-bottom:8px"><span style="font-size:11px;color:#666">Living Room L x W (ft) — e.g. 18 x 12</span><input id="hm_lr" style="width:100%;height:40px;border:1px solid #ddd;border-radius:8px;padding:0 10px;margin-top:4px" placeholder="e.g. 14 x 11"/></label>
+      <label style="display:block;margin-bottom:8px"><span style="font-size:11px">Couch / Sofa size</span><input id="hm_couch" style="width:100%;height:40px;border:1px solid #ddd;border-radius:8px;padding:0 10px;margin-top:4px" placeholder="e.g. 84 inch 3-seater"/></label>
+      <label style="display:block;margin-bottom:8px"><span style="font-size:11px">Other — Bedroom, notes</span><textarea id="hm_notes" style="width:100%;min-height:70px;border:1px solid #ddd;border-radius:8px;padding:8px" placeholder="Any other measurements, rug size, TV wall..."></textarea></label>
+      <button id="hm_save" style="width:100%;height:44px;border-radius:9999px;background:#111;color:white;margin-top:8px">Save My Home</button>
+      <div id="hm_savedMsg" style="display:none;color:green;font-size:11px;margin-top:6px;text-align:center">Saved!</div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function(){
+  const LS_KEY="homeMeasurements";
+  const DEFAULT_HTML = '<div style="color:#667085;font-size:12px;border:1px dashed #d9d5c9;padding:12px;border-radius:10px;line-height:1.5">No measurements yet — paste them when you measure.<br><span style="font-size:11px;color:#9a9588">Example: Living Room 14ft x 11ft (154 sqft), Couch 84\" 3-seater, Bedroom 12x10.<br>Then when you tour 350 W 50th you can compare instantly.</span></div>';
+  function getStore(){
+    try{
+      const raw=localStorage.getItem(LS_KEY);
+      if(raw){ const j=JSON.parse(raw); if(j) return j; }
+    }catch{}
+    try{
+      if(window.HOME_MEASUREMENTS && typeof window.HOME_MEASUREMENTS==="object" && Object.keys(window.HOME_MEASUREMENTS||{}).length) return window.HOME_MEASUREMENTS;
+    }catch{}
+    return null;
+  }
+  function calcArea(ss){
+    if(!ss) return null;
+    try{
+      const m=ss.match(/(\d+(?:\.\d+)?)\s*(?:ft|'\s*|’)?\s*x\s*(\d+(?:\.\d+)?)/i);
+      if(!m) return null;
+      const a=parseFloat(m[1]), b=parseFloat(m[2]);
+      if(isNaN(a)||isNaN(b)) return null;
+      const area=Math.round(a*b*10)/10;
+      return {a,b,area};
+    }catch{return null;}
+  }
+  function esc(t){ if(!t) return ""; const d=document.createElement("div"); d.textContent=t; return d.innerHTML; }
+  function render(){
+    const data=getStore();
+    const disp=document.getElementById("yourHomeDisplay");
+    if(!disp) return;
+    if(!data || (!data.livingRoom && !data.couch && !data.couchSize && !data.bedroom && !data.notes)){
+      disp.innerHTML=DEFAULT_HTML; return;
+    }
+    let html='<div style="display:grid;gap:8px">';
+    if(data.livingRoom){
+      const lrArea=calcArea(data.livingRoom);
+      html+='<div style="background:#fdf9f0;border:1px solid #f0e8d2;border-radius:10px;padding:10px 12px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#8a8476;margin-bottom:3px">Living Room</div><div style="font-size:13px;font-weight:500">'+esc(data.livingRoom)+(lrArea?' <span style="color:#6a665c;font-weight:400;font-size:11px">· '+lrArea.a+' × '+lrArea.b+' = '+lrArea.area+' sqft</span>':'')+'</div></div>';
+    }
+    if(data.couch || data.couchSize){
+      const c=data.couch||data.couchSize;
+      html+='<div style="background:#fff;border:1px solid #e8e2d6;border-radius:10px;padding:10px 12px"><div style="font-size:10px;text-transform:uppercase;color:#8a8476;margin-bottom:2px">Couch / Sofa</div><div style="font-size:12px">'+esc(c)+'</div></div>';
+    }
+    if(data.bedroom){
+      html+='<div style="background:#fff;border:1px solid #e8e2d6;border-radius:10px;padding:10px 12px"><div style="font-size:10px;text-transform:uppercase;color:#8a8476">Bedroom / Other</div><div style="font-size:12px">'+esc(data.bedroom)+'</div></div>';
+    }
+    if(data.notes){
+      html+='<div style="background:#fafaf7;border:1px solid #eae6dd;border-radius:10px;padding:10px 12px"><div style="font-size:10px;text-transform:uppercase;color:#8a8476">Notes</div><div style="font-size:11px;white-space:pre-wrap;line-height:1.4;margin-top:2px">'+esc(data.notes)+'</div></div>';
+    }
+    if(data.updatedAt){
+      try{ const d=new Date(data.updatedAt); html+='<div style="font-size:10px;color:#9a9588;text-align:right;margin-top:2px">Updated '+d.toLocaleString()+'</div>'; }catch{}
+    }
+    html+='</div>';
+    disp.innerHTML=html;
+  }
+  function openModal(){
+    const m=document.getElementById("yourHomeModal");
+    if(!m) return;
+    m.style.display="grid";
+    render();
+    const data=getStore()||{};
+    const lr=document.getElementById("hm_lr"); if(lr) lr.value=data.livingRoom||"";
+    const co=document.getElementById("hm_couch"); if(co) co.value=data.couch||data.couchSize||"";
+    const br=document.getElementById("hm_bedroom"); if(br) br.value=data.bedroom||"";
+    const nt=document.getElementById("hm_notes"); if(nt) nt.value=data.notes||"";
+  }
+  function closeModal(){
+    const m=document.getElementById("yourHomeModal");
+    if(m) m.style.display="none";
+  }
+  function init(){
+    const btn=document.getElementById("yourHomeBtn");
+    const closeBtn=document.getElementById("yourHomeClose");
+    const saveBtn=document.getElementById("hm_save");
+    const modal=document.getElementById("yourHomeModal");
+    if(!btn) return;
+    btn.addEventListener("click", function(e){ e.stopPropagation(); openModal(); });
+    if(closeBtn) closeBtn.addEventListener("click", closeModal);
+    if(modal) modal.addEventListener("click", function(e){ if(e.target===modal) closeModal(); });
+    document.addEventListener("keydown", function(e){ if(e.key==="Escape") closeModal(); });
+    if(saveBtn){
+      saveBtn.addEventListener("click", function(){
+        const lr=(document.getElementById("hm_lr")||{}).value||"";
+        const couch=(document.getElementById("hm_couch")||{}).value||"";
+        const bedroom=(document.getElementById("hm_bedroom")||{}).value||"";
+        const notes=(document.getElementById("hm_notes")||{}).value||"";
+        const payload={ livingRoom: lr.trim(), couch: couch.trim(), couchSize: couch.trim(), bedroom: bedroom.trim(), notes: notes.trim(), updatedAt: new Date().toISOString() };
+        try{ localStorage.setItem(LS_KEY, JSON.stringify(payload)); window.HOME_MEASUREMENTS=payload; }catch{}
+        render();
+        const msg=document.getElementById("hm_savedMsg");
+        if(msg){ msg.style.display="block"; setTimeout(()=>{msg.style.display="none";},2200); }
+      });
+    }
+    window.__renderHome=render;
+    window.__openYourHome=openModal;
+    window.HOME_MEASUREMENTS = getStore();
+  }
+  if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded", init); } else { init(); }
+})();
+</script>
+
+
+
+<script id="home-measurements-final">
+// Final Your Home implementation — structured, comparison-friendly
+window.HOME_MEASUREMENTS = {"coffee_table": {"display": "45 in (3 ft 9 in)", "ft_in": "3 ft 9 in", "label": "Coffee table", "length_in": 45, "raw": "45 in"}, "dining_table": {"display": "3 ft wide \u00d7 48 in full (16 folded + 16+16 flaps) \u2014 4 ft", "flap_ft_in": "1 ft 4 in", "flap_in": 16, "folded_length_in": 16, "full_length_ft_in": "4 ft", "full_length_in": 48, "label": "Table (folding)", "raw": "3ft wide. 16inch long when completely folded. Each flap 16inch", "width_ft_in": "3 ft", "width_in": 36}, "night_stand": {"depth_ft_in": "1 ft 6 in", "depth_in": 18, "display": "28 in \u00d7 18 in (2 ft 4 in \u00d7 1 ft 6 in)", "label": "Night stand", "raw": "28 in by 18 in", "width_ft_in": "2 ft 4 in", "width_in": 28}, "sofa": {"depth_ft_in": "5 ft 4 in", "depth_in": 64, "display": "7 ft 10 in \u00d7 5 ft 4 in (94 \u00d7 64 in) \u2014 7'10\" x 5'4\"", "label": "Sofa (L-shape)", "length_ft_in": "7 ft 10 in", "length_in": 94, "notes": "7'10\" x 5'4\"", "raw": "7 ft 10 in by 5 ft 4 in"}, "sofa_to_coffee_edge": {"display": "111 in (9 ft 3 in)", "distance_in": 111, "ft_in": "9 ft 3 in", "label": "Back of sofa to edge of coffee table", "raw": "111 in"}, "table": {"display": "3 ft wide \u00d7 48 in full", "flap_in": 16, "folded_length_in": 16, "full_length_in": 48, "label": "Table (folding)", "raw": "3ft wide. 16inch long when completely folded. Each flap is 16inch", "width_in": 36}, "triangle_side_table": {"a_in": 18.5, "b_in": 36, "display": "18.5 in \u00d7 3 ft", "label": "Triangle side table", "raw": "18.5in by 3 ft"}, "triangle_table": {"a_ft_in": "1 ft 6.5 in", "a_in": 18.5, "b_ft_in": "3 ft", "b_in": 36, "display": "18.5 in \u00d7 3 ft (18.5 \u00d7 36 in)", "label": "Triangle side table", "raw": "18.5in by 3 ft"}, "updated_at": "2026-08-05T13:48:00-04:00", "vanity": {"depth_ft_in": "1 ft 6 in", "depth_in": 18, "display": "3 ft \u00d7 18 in (36 \u00d7 18 in)", "label": "Vanity", "raw": "3 ft by 18 in", "width_ft_in": "3 ft", "width_in": 36}};
+try { localStorage.setItem('homeMeasurements', JSON.stringify(window.HOME_MEASUREMENTS)); } catch(e){}
+(function(){
+  const LS_KEY = "homeMeasurements";
+  function inchesToFtIn(inches){
+    if(inches==null || isNaN(Number(inches))) return null;
+    const total = Number(inches);
+    const ft = Math.floor(total/12);
+    const rem = Math.round((total - ft*12)*10)/10;
+    if(ft===0) return `${rem} in`;
+    if(rem===0) return `${ft} ft`;
+    return `${ft} ft ${rem} in`;
+  }
+  function esc(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+  function getStore(){
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if(raw){ const j=JSON.parse(raw); if(j && typeof j==='object' && Object.keys(j).length) return j; }
+    } catch(e){}
+    return window.HOME_MEASUREMENTS || null;
+  }
+  function renderStructured(){
+    const disp = document.getElementById('yourHomeDisplay');
+    if(!disp) return;
+    const data = getStore();
+    if(!data){
+      disp.innerHTML = '<div style="color:#667085;font-size:12px;border:1px dashed #d9d5c9;padding:12px;border-radius:10px">No measurements yet</div>';
+      return;
+    }
+    const hasStruct = !!(data.sofa || data.dining_table || data.table || data.sofa_to_coffee_edge || data.vanity || data.triangle_table || data.triangle_side_table || data.coffee_table || data.night_stand);
+    if(!hasStruct && !data.livingRoom){
+      // fallback legacy
+      disp.innerHTML = '<div style="color:#667085;font-size:12px;border:1px dashed #d9d5c9;padding:12px;border-radius:10px">No measurements yet</div>';
+      return;
+    }
+    let html = '';
+
+    if(hasStruct){
+      html += '<div style="background:#fdf9f0;border:1px solid #f0e8d2;border-radius:10px;padding:10px 12px;margin-bottom:10px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#8a8476">For 350 W 50th tour — your current home</div><div style="font-size:11px;color:#555;margin-top:2px;line-height:1.4">Compare these today, inches + ft/in. All raw strings preserved.</div></div>';
+      html += '<div style="display:grid;gap:8px">';
+      if(data.sofa){
+        const s=data.sofa;
+        html += `<div style="background:#fff;border:1px solid #e8e2d6;border-radius:10px;padding:10px 12px"><div style="font-size:10px;text-transform:uppercase;color:#8a8476;margin-bottom:2px">${esc(s.label)} — L-shape</div><div style="font-size:13px;font-weight:600">${s.length_in} in × ${s.depth_in} in <span style="font-weight:400;color:#666;font-size:11px">· ${esc(s.length_ft_in||inchesToFtIn(s.length_in)||'')} × ${esc(s.depth_ft_in||inchesToFtIn(s.depth_in)||'')}</span></div><div style="font-size:11px;color:#111;margin-top:2px">${esc(s.display||'')} <span style="color:#666">· notes: ${esc(s.notes||'')}</span></div><div style="font-size:10px;color:#888;margin-top:2px;font-family:ui-monospace,monospace">Raw: ${esc(s.raw)}</div></div>`;
+      }
+      if(data.dining_table||data.table){
+        const t=data.dining_table||data.table;
+        html += `<div style="background:#fff;border:1px solid #e8e2d6;border-radius:10px;padding:10px 12px"><div style="font-size:10px;text-transform:uppercase;color:#8a8476">${esc(t.label||'Table (folding)')}</div><div style="font-size:12.5px;font-weight:600;margin-top:2px">${t.width_in} in wide (${esc(t.width_ft_in||inchesToFtIn(t.width_in)||'')}) · full ${t.full_length_in||48} in (${esc(t.full_length_ft_in||inchesToFtIn(t.full_length_in)||'4 ft')})</div><div style="font-size:11px;color:#666;margin-top:2px;line-height:1.4">Folded: ${t.folded_length_in} in · flap: ${t.flap_in} in each · ${t.flap_in*2 + t.folded_length_in} in extended<br>Raw: ${esc(t.raw)}</div></div>`;
+      }
+      if(data.sofa_to_coffee_edge){
+        const stc=data.sofa_to_coffee_edge;
+        html += `<div style="background:#fff;border:1px solid #e8e2d6;border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:10px;text-transform:uppercase;color:#8a8476">${esc(stc.label)}</div><div style="font-size:13px;font-weight:600;margin-top:2px">${stc.distance_in} in <span style="font-weight:400;color:#666">· ${esc(stc.ft_in||inchesToFtIn(stc.distance_in)||'')}</span></div></div><div style="font-size:11px;background:#fdf9f0;border:1px solid #f0e8d2;padding:4px 8px;border-radius:999px">${esc(stc.display||'')}</div></div>`;
+      }
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+      if(data.vanity){
+        const v=data.vanity;
+        html += `<div style="background:#fff;border:1px solid #e8e2d6;border-radius:10px;padding:10px 12px"><div style="font-size:10px;text-transform:uppercase;color:#8a8476">${esc(v.label)}</div><div style="font-size:12.5px;font-weight:600;margin-top:2px">${v.width_in} × ${v.depth_in} in</div><div style="font-size:11px;color:#666">${esc(v.width_ft_in||inchesToFtIn(v.width_in))} × ${esc(v.depth_ft_in||inchesToFtIn(v.depth_in))}</div><div style="font-size:10px;color:#888">${esc(v.display||'')}</div></div>`;
+      }
+      if(data.triangle_table||data.triangle_side_table){
+        const tt=data.triangle_table||data.triangle_side_table;
+        html += `<div style="background:#fff;border:1px solid #e8e2d6;border-radius:10px;padding:10px 12px"><div style="font-size:10px;text-transform:uppercase;color:#8a8476">${esc(tt.label)}</div><div style="font-size:12.5px;font-weight:600;margin-top:2px">${tt.a_in} in × ${tt.b_in} in</div><div style="font-size:11px;color:#666">${esc(tt.a_ft_in||inchesToFtIn(tt.a_in)||'')} × ${esc(tt.b_ft_in||inchesToFtIn(tt.b_in)||'')}</div><div style="font-size:10px;color:#888">${esc(tt.display||'')}</div></div>`;
+      }
+      html += '</div>';
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+      if(data.coffee_table){
+        const ct=data.coffee_table;
+        html += `<div style="background:#fff;border:1px solid #e8e2d6;border-radius:10px;padding:10px 12px"><div style="font-size:10px;text-transform:uppercase;color:#8a8476">${esc(ct.label)}</div><div style="font-size:12.5px;font-weight:600">${ct.length_in} in <span style="font-weight:400;color:#666">· ${esc(ct.ft_in||inchesToFtIn(ct.length_in))}</span></div><div style="font-size:10px;color:#888">${esc(ct.display||'')}</div></div>`;
+      }
+      if(data.night_stand){
+        const ns=data.night_stand;
+        html += `<div style="background:#fff;border:1px solid #bbf7d0;border-radius:10px;padding:10px 12px"><div style="font-size:10px;text-transform:uppercase;color:#0f7a3d">Night stand (new)</div><div style="font-size:12.5px;font-weight:600">${ns.width_in} × ${ns.depth_in} in</div><div style="font-size:11px;color:#555">${esc(ns.width_ft_in)} × ${esc(ns.depth_ft_in)}</div><div style="font-size:10px;color:#666">${esc(ns.display)}</div><div style="font-size:10px;color:#666;margin-top:2px">Raw: ${esc(ns.raw)}</div></div>`;
+      }
+      html += '</div>';
+
+      // clean list
+      html += '<div style="background:#fafaf7;border:1px solid #eae6dd;border-radius:10px;padding:10px 12px"><div style="font-size:10px;text-transform:uppercase;color:#8a8476;font-weight:700">Clean list — inches + ft/in (copy-friendly)</div><ul style="margin:8px 0 0;padding-left:16px;font-size:11.5px;line-height:1.5;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#222">';
+      if(data.sofa) html += `<li>• Sofa L-shape: ${data.sofa.length_in}in (${inchesToFtIn(data.sofa.length_in)}) × ${data.sofa.depth_in}in (${inchesToFtIn(data.sofa.depth_in)}) — ${esc(data.sofa.notes||'7\'10" x 5\'4"')} — raw: ${esc(data.sofa.raw)}</li>`;
+      if(data.dining_table) html += `<li>• Dining table: ${data.dining_table.width_in}in wide (${inchesToFtIn(data.dining_table.width_in)}) · folded ${data.dining_table.folded_length_in}in, flaps ${data.dining_table.flap_in}in each → full ${data.dining_table.full_length_in}in (${inchesToFtIn(data.dining_table.full_length_in)})</li>`;
+      if(data.sofa_to_coffee_edge) html += `<li>• Sofa-back → coffee edge: ${data.sofa_to_coffee_edge.distance_in}in (${esc(data.sofa_to_coffee_edge.ft_in)})</li>`;
+      if(data.vanity) html += `<li>• Vanity: ${data.vanity.width_in}in × ${data.vanity.depth_in}in (${inchesToFtIn(data.vanity.width_in)} × ${inchesToFtIn(data.vanity.depth_in)})</li>`;
+      if(data.triangle_table) html += `<li>• Triangle side: ${data.triangle_table.a_in}in × ${data.triangle_table.b_in}in (${inchesToFtIn(data.triangle_table.a_in)} × ${inchesToFtIn(data.triangle_table.b_in)})</li>`;
+      else if(data.triangle_side_table) html += `<li>• Triangle side: ${data.triangle_side_table.a_in}in × ${data.triangle_side_table.b_in}in</li>`;
+      if(data.coffee_table) html += `<li>• Coffee table: ${data.coffee_table.length_in}in (${inchesToFtIn(data.coffee_table.length_in)})</li>`;
+      if(data.night_stand) html += `<li>• Night stand: ${data.night_stand.width_in}in × ${data.night_stand.depth_in}in (${esc(data.night_stand.width_ft_in)} × ${esc(data.night_stand.depth_ft_in)}) — ${esc(data.night_stand.display)}</li>`;
+      html += '</ul></div>';
+      html += '</div>';
+    }
+    disp.innerHTML = html || '<div>No data</div>';
+  }
+
+  function openModal(){
+    const m=document.getElementById('yourHomeModal');
+    if(!m) return;
+    m.style.display='grid'; m.classList.add('open');
+    renderStructured();
+  }
+  function closeModal(){
+    const m=document.getElementById('yourHomeModal');
+    if(m){ m.style.display='none'; m.classList.remove('open'); }
+  }
+
+  // override global hooks
+  window.__renderHome = renderStructured;
+  window.__openYourHome = openModal;
+
+  // rebind buttons
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const btn=document.getElementById('yourHomeBtn');
+    const closeBtn=document.getElementById('yourHomeClose');
+    const saveBtn=document.getElementById('hm_save');
+    const modal=document.getElementById('yourHomeModal');
+    if(btn){ btn.replaceWith(btn.cloneNode(true)); const newBtn=document.getElementById('yourHomeBtn'); newBtn?.addEventListener('click', (e)=>{ e.stopPropagation(); openModal(); }); }
+    if(closeBtn) closeBtn.addEventListener('click', closeModal);
+    if(modal) modal.addEventListener('click', (e)=>{ if(e.target===modal) closeModal(); });
+    if(saveBtn){
+      // keep legacy save but also preserve structured
+      saveBtn.addEventListener('click', ()=>{
+        const lr=(document.getElementById('hm_lr')||{}).value||'';
+        const couch=(document.getElementById('hm_couch')||{}).value||'';
+        const bedroom=(document.getElementById('hm_bedroom')||{}).value||'';
+        const notes=(document.getElementById('hm_notes')||{}).value||'';
+        // Preserve structured fields and add legacy fields if provided
+        const current = getStore()||window.HOME_MEASUREMENTS||{};
+        const payload = { ...current, livingRoom: lr.trim()||current.livingRoom, couch: couch.trim()||current.couch, bedroom: bedroom.trim()||current.bedroom, notes: notes.trim()||current.notes, updatedAt: new Date().toISOString() };
+        try{ localStorage.setItem(LS_KEY, JSON.stringify(payload)); window.HOME_MEASUREMENTS=payload; }catch(e){}
+        renderStructured();
+        const msg=document.getElementById('hm_savedMsg');
+        if(msg){ msg.style.display='block'; setTimeout(()=>msg.style.display='none',2200); }
+      });
+    }
+    renderStructured();
+  });
+
+  // if already loaded
+  if(document.readyState!=='loading'){
+    renderStructured();
+    const btn=document.getElementById('yourHomeBtn');
+    if(btn && !btn.dataset.bound){
+      btn.dataset.bound='1';
+      btn.addEventListener('click', (e)=>{ e.stopPropagation(); openModal(); });
+    }
+  }
+})();
+</script>
+
 </body>
 </html>
